@@ -23,7 +23,12 @@ if (app.Environment.IsDevelopment())
     {
         options.Theme = ScalarTheme.Solarized;
         options.DarkMode = true;
+
+        
     });
+
+    
+
 
 }
 

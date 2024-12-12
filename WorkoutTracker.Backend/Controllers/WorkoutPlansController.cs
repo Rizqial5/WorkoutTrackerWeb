@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
 
-namespace WorkoutTracker.Backend
+namespace WorkoutTracker.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -75,12 +75,12 @@ namespace WorkoutTracker.Backend
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans([FromBody] WorkoutPlansPostDTO workoutPlansPost)
+        public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans([FromBody] WorkoutPlansPostRequest workoutPlansRequest)
         {
-            var workoutPlans = new WorkoutPlans { PlanName = workoutPlansPost.PlansName };
+            var workoutPlans = new WorkoutPlans { PlanName = workoutPlansRequest.PlansName };
 
             var exercises = await _context.ExerciseDatas
-                .Where(e => workoutPlansPost.ExercisesCollection.Contains(e.ExerciseId))
+                .Where(e => workoutPlansRequest.ExercisesCollection.Contains(e.ExerciseId))
                 .ToListAsync();
 
             workoutPlans.Exercises = exercises;
@@ -98,7 +98,7 @@ namespace WorkoutTracker.Backend
                     .ToList()
             };
 
-            return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId },response);
+            return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId }, response);
         }
 
         // DELETE: api/WorkoutPlans/5
