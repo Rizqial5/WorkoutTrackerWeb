@@ -30,7 +30,10 @@ using WorkoutTracker.Backend.Models;
             modelBuilder.Entity<ExerciseData>().HasData(
 
                 new ExerciseData { ExerciseId = 1, Name = "Bench Press", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Chest},
-                new ExerciseData { ExerciseId = 2, Name = "Squat", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Leg}
+                new ExerciseData { ExerciseId = 2, Name = "Squat", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Leg},
+                new ExerciseData { ExerciseId = 3, Name = "Dumble Press", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Chest},
+                new ExerciseData { ExerciseId = 4, Name = "RDL (Romanian Deadlift)", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Leg}
+                
             );
         }
 

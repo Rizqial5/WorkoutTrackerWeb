@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WorkoutTracker.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212160704_AddMoreExercises")]
+    partial class AddMoreExercises
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,22 +78,6 @@ namespace WorkoutTracker.Backend.Migrations
                             CategoryWorkout = 1,
                             MuscleGroup = 3,
                             Name = "Squat",
-                            PlansId = 0
-                        },
-                        new
-                        {
-                            ExerciseId = 3,
-                            CategoryWorkout = 1,
-                            MuscleGroup = 1,
-                            Name = "Dumble Press",
-                            PlansId = 0
-                        },
-                        new
-                        {
-                            ExerciseId = 4,
-                            CategoryWorkout = 1,
-                            MuscleGroup = 3,
-                            Name = "RDL (Romanian Deadlift)",
                             PlansId = 0
                         });
                 });
