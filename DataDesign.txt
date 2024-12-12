@@ -1,0 +1,27 @@
+ExerciseData:
+-------------
+int id (pk)(fk)
+string Name
+CategoryEnum Category (cardio,strength,flexibility)
+MuscleGroup MuscleGroup (Chest,Back,Legs,Arms,Abs)
+int Sets
+int Weights
+
+WorkoutPlans:
+------------
+int id (pk)
+string NamePlans
+ExerciseData Exercices (fk)
+UserIdentity ID (fk)
+
+
+UserIdentity (System)
+--------------------
+
+SchedulePlans:
+--------------------
+int id (pk)
+Datetime ScheduledTime 
+Workoutplans (fk)
+UserIdentity (fk)
+
