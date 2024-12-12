@@ -61,32 +61,46 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/WorkoutPlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlans workoutPlans)
+        public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlansPostRequest workoutRequest)
         {
-            if (id != workoutPlans.PlanId)
-            {
-                return BadRequest();
-            }
+            var workoutPlan = _context.WorkoutPlans
+                .Include(wp => wp.Exercises)
+                .FirstOrDefault(wp => wp.PlanId == id);
 
-            _context.Entry(workoutPlans).State = EntityState.Modified;
+            if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
 
-            try
+            workoutPlan.PlanName = workoutRequest.PlansName;
+
+            var newExercises = _context.ExerciseDatas
+                .Where(e => workoutRequest.ExercisesCollection.Contains(e.ExerciseId));
+
+            foreach (var exercise in newExercises)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WorkoutPlansExists(id))
+                if (workoutPlan!.Exercises!.All(e => e.ExerciseId != exercise.ExerciseId))
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    workoutPlan.Exercises.Add(exercise);
                 }
             }
 
-            return NoContent();
+            await _context.SaveChangesAsync();
+
+            var response = new
+            {
+                workoutPlan.PlanId,
+                workoutPlan.PlanName,
+                Exercises = workoutPlan.Exercises
+                    .Select(e => new 
+                       { 
+                            e.ExerciseId, 
+                            e.Name,
+                            e.CategoryWorkout,
+                            e.MuscleGroup
+                        })
+                    .ToList()
+            };
+
+
+            return Ok(response);
         }
 
         // POST: api/WorkoutPlans
