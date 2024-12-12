@@ -11,6 +11,9 @@ namespace WorkoutTracker.Backend.Models
         [StringLength(50)]
         public string PlanName { get; set; }
 
+        
+        public DateTime ScheduledTime { get; set; }
+
         public ICollection<ExerciseData> Exercises { get; set; }
 
     }
