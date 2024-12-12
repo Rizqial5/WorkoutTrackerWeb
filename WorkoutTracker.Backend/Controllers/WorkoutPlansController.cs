@@ -31,7 +31,13 @@ namespace WorkoutTracker.Backend.Controllers
                     wp.PlanId,
                     wp.PlanName,
                     Exercises = wp.Exercises
-                        .Select(e => new { e.ExerciseId, e.Name, e.CategoryWorkout, e.MuscleGroup })
+                        .Select(e => new
+                        {
+                            e.ExerciseId, 
+                            e.Name, 
+                            e.CategoryWorkout, 
+                            e.MuscleGroup
+                        })
 
                 }).ToListAsync();
 
