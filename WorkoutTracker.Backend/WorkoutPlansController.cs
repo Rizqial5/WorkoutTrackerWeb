@@ -75,12 +75,30 @@ namespace WorkoutTracker.Backend
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans(WorkoutPlans workoutPlans)
+        public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans([FromBody] WorkoutPlansPostDTO workoutPlansPost)
         {
+            var workoutPlans = new WorkoutPlans { PlanName = workoutPlansPost.PlansName };
+
+            var exercises = await _context.ExerciseDatas
+                .Where(e => workoutPlansPost.ExercisesCollection.Contains(e.ExerciseId))
+                .ToListAsync();
+
+            workoutPlans.Exercises = exercises;
+            //return Ok(workoutPlans);
+
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId }, workoutPlans);
+            var response = new
+            {
+                workoutPlans.PlanId,
+                workoutPlans.PlanName,
+                Exercises = workoutPlans.Exercises
+                    .Select(e => new { e.ExerciseId, e.Name })
+                    .ToList()
+            };
+
+            return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId },response);
         }
 
         // DELETE: api/WorkoutPlans/5
