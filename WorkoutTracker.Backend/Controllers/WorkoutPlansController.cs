@@ -115,7 +115,6 @@ namespace WorkoutTracker.Backend.Controllers
                 .ToListAsync();
 
             workoutPlans.Exercises = exercises;
-            //return Ok(workoutPlans);
 
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();
@@ -148,9 +147,6 @@ namespace WorkoutTracker.Backend.Controllers
             return NoContent();
         }
 
-        private bool WorkoutPlansExists(int id)
-        {
-            return _context.WorkoutPlans.Any(e => e.PlanId == id);
-        }
+
     }
 }
