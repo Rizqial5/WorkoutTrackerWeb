@@ -56,4 +56,5 @@ using WorkoutTracker.Backend.Models;
         public DbSet<WorkoutPlans> WorkoutPlans { get; set; } = default!;
         public DbSet<ExerciseData> ExerciseDatas { get; set; } = default!;
         public DbSet<ExerciseSet> ExerciseSets { get; set; } = default!;
+        public DbSet<SchedulePlans> SchedulePlans { get; set; } = default!;
     }
