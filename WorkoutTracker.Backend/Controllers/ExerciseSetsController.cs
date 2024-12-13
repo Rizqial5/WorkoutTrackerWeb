@@ -82,32 +82,43 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/ExerciseSets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExerciseSet(int id, ExerciseSet exerciseSet)
+        public async Task<IActionResult> PutExerciseSet(int id, CreateExerciseSetRequest request)
         {
-            if (id != exerciseSet.ExerciseSetId)
-            {
-                return BadRequest();
-            }
+            var exerciseSet = await _context.ExerciseSets
+                .Include(es => es.Exercise)
+                .FirstOrDefaultAsync(es => es.ExerciseSetId == id);
 
-            _context.Entry(exerciseSet).State = EntityState.Modified;
+            if (exerciseSet == null) return NotFound("Exercise Set not found");
+            
+            var exercise = await _context.ExerciseDatas.FindAsync(request.ExerciseId);
 
-            try
+            if (exercise == null) return NotFound("Exercise not found in Exercise Data");
+
+            exerciseSet.ExerciseSetName = request.ExerciseSetName;
+            exerciseSet.ExerciseId = request.ExerciseId;
+            exerciseSet.Set = request.Set;
+            exerciseSet.Repetitions = request.Repetitions;
+            exerciseSet.Weight = request.Weight;
+
+            await _context.SaveChangesAsync();
+
+            var response = new ExerciseSetResponse
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExerciseSetExists(id))
+                ExerciseSetId = exerciseSet.ExerciseSetId,
+                ExerciseSetName = exerciseSet.ExerciseSetName,
+                Exercise = new ExerciseDataResponse
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    Id = exerciseSet.Exercise.ExerciseId,
+                    Name = exerciseSet.Exercise.Name,
+                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
+                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
+                },
+                Set = exerciseSet.Set,
+                Repetitions = exerciseSet.Repetitions,
+                Weight = exerciseSet.Weight,
+            };
 
-            return NoContent();
+            return Ok(response);
         }
 
         // POST: api/ExerciseSets
@@ -171,9 +182,6 @@ namespace WorkoutTracker.Backend.Controllers
             return NoContent();
         }
 
-        private bool ExerciseSetExists(int id)
-        {
-            return _context.ExerciseSets.Any(e => e.ExerciseSetId == id);
-        }
+        
     }
 }
