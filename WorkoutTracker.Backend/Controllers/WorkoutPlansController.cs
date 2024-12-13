@@ -35,6 +35,7 @@ namespace WorkoutTracker.Backend.Controllers
                         .Select(e => new
                         {
                             e.ExerciseSetId, 
+                            e.ExerciseSetName,
                             Exercise = new
                             {
                                 e.Exercise!.Name,
@@ -100,6 +101,7 @@ namespace WorkoutTracker.Backend.Controllers
                     .Select(e => new 
                        {
                         e.ExerciseSetId,
+                        e.ExerciseSetName,
                         Exercise = new
                         {
                             e.Exercise!.Name,
@@ -165,6 +167,7 @@ namespace WorkoutTracker.Backend.Controllers
                     .Select(e => new
                     {
                         e.ExerciseSetId,
+                        e.ExerciseSetName,
                         Exercise = new
                         {
                             e.Exercise!.Name,
