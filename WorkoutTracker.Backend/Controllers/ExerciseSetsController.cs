@@ -131,6 +131,8 @@ namespace WorkoutTracker.Backend.Controllers
             var exercise = await _context.ExerciseDatas
                     .FindAsync(exerciseSetRequest.ExerciseId);
 
+            if (exercise == null) return BadRequest("Exercise Not Found in ExerciseData");
+
             var exerciseSet = new ExerciseSet
             {
                 ExerciseSetName = exerciseSetRequest.ExerciseSetName,
