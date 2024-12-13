@@ -84,7 +84,6 @@ namespace WorkoutTracker.Backend.Controllers
 
             var schedulePlans = new SchedulePlans
             {
-                Id = request.Id,
                 ScheduleTime = request.DateTime,
                 WorkoutPlansId = request.WorkoutPlansId
             };
