@@ -14,7 +14,8 @@ namespace WorkoutTracker.Backend.Models
         
         public DateTime ScheduledTime { get; set; }
 
-        public ICollection<ExerciseData> Exercises { get; set; }
+        
+        public ICollection<ExerciseSet> ExerciseSets { get; set; }
 
     }
 }

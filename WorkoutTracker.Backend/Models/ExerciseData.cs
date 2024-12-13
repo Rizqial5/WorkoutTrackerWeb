@@ -17,9 +17,10 @@ namespace WorkoutTracker.Backend.Models
         [Required]
         public MuscleGroup MuscleGroup { get; set; }
 
-        [ForeignKey("PlansId")]
-        public ICollection<WorkoutPlans> WorkoutPlans { get; set; }
-        public int PlansId { get; set; }
+
+        [ForeignKey("ExerciseSetId")]
+        public int ExerciseSetId { get; set; }
+        public ICollection<ExerciseSet>? ExerciseSets { get; set; }
     }
 
     public enum CategoryWorkout

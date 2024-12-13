@@ -19,8 +19,10 @@ namespace WorkoutTracker.Backend.Models
 
         [ForeignKey("ExerciseId")]
         public int ExerciseId { get; set; }
-
         public ExerciseData? Exercise { get; set; }
+
+        [ForeignKey("PlansId")]
+        public ICollection<WorkoutPlans> WorkoutPlans { get; set; }
 
     }
 }
