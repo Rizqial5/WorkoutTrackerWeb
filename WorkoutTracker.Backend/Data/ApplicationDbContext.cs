@@ -17,6 +17,12 @@ using WorkoutTracker.Backend.Models;
             modelBuilder.Entity<WorkoutPlans>(entity =>
             {
                 entity.HasKey(w => w.PlanId);
+
+                entity.HasMany(wp => wp.ScheduledTime)
+                    .WithOne(sp => sp.WorkoutPlan)
+                    .HasForeignKey(wp => wp.WorkoutPlansId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
                 entity.HasMany(e => e.ExerciseSets)
                     .WithMany(w => w.WorkoutPlans);
             });

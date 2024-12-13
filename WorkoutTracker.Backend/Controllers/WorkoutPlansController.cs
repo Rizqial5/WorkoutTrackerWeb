@@ -33,7 +33,7 @@ namespace WorkoutTracker.Backend.Controllers
             {   
                     PlanId = wp.PlanId,
                     PlanName = wp.PlanName,
-                    ScheduledTime = wp.ScheduledTime,
+                    //ScheduledTime = wp.ScheduledTime,
                     ExerciseSets = wp.ExerciseSets.Select(es=> new ExerciseSetResponse
                     {
                         ExerciseSetId = es.ExerciseSetId,
@@ -70,7 +70,7 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 PlanId = workoutPlans.PlanId,
                 PlanName = workoutPlans.PlanName,
-                ScheduledTime = workoutPlans.ScheduledTime,
+                //ScheduledTime = workoutPlans.ScheduledTime,
                 ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
                 {
                     ExerciseSetId = es.ExerciseSetId,
@@ -120,7 +120,7 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 PlanName = workoutPlan.PlanName,
                 PlanId = workoutPlan.PlanId,
-                ScheduledTime = workoutPlan.ScheduledTime,
+                //ScheduledTime = workoutPlan.ScheduledTime,
                 ExerciseSets = workoutPlan.ExerciseSets.Select(es => new ExerciseSetResponse
                 {
                     ExerciseSetId = es.ExerciseSetId,
@@ -149,7 +149,7 @@ namespace WorkoutTracker.Backend.Controllers
 
             if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
 
-            workoutPlan.ScheduledTime = setDateTime;
+            //workoutPlan.ScheduledTime = setDateTime;
 
             await _context.SaveChangesAsync();
 
@@ -185,7 +185,7 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 PlanName = workoutPlans.PlanName,
                 PlanId = workoutPlans.PlanId,
-                ScheduledTime = workoutPlans.ScheduledTime,
+                //ScheduledTime = workoutPlans.ScheduledTime,
                 ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
                 {
                     ExerciseSetId = es.ExerciseSetId,

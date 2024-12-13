@@ -12,7 +12,7 @@ namespace WorkoutTracker.Backend.Models
         public string PlanName { get; set; }
 
         
-        public DateTime ScheduledTime { get; set; }
+        public ICollection<SchedulePlans> ScheduledTime { get; set; }
 
         
         public ICollection<ExerciseSet> ExerciseSets { get; set; }
