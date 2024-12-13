@@ -3,7 +3,7 @@
     public class WorkoutPlansPostRequest
     {
         public string PlansName { get; set; }
-        public ICollection<int> ExercisesCollection { get; set; }
+        public ICollection<int> ExercisesSetExercisesCollection { get; set; }
 
     }
 }

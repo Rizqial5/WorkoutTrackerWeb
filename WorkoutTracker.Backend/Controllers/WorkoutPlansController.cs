@@ -80,7 +80,7 @@ namespace WorkoutTracker.Backend.Controllers
             workoutPlan.PlanName = workoutRequest.PlansName;
 
             var newExercises = _context.ExerciseSets
-                .Where(e => workoutRequest.ExercisesCollection.Contains(e.ExerciseId));
+                .Where(e => workoutRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseId));
 
             foreach (var exercise in newExercises)
             {
@@ -148,7 +148,7 @@ namespace WorkoutTracker.Backend.Controllers
             var workoutPlans = new WorkoutPlans { PlanName = workoutPlansRequest.PlansName };
 
             var exercises = await _context.ExerciseSets
-                .Where(e => workoutPlansRequest.ExercisesCollection.Contains(e.ExerciseSetId))
+                .Where(e => workoutPlansRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseSetId))
                 .Include(exerciseSet => exerciseSet.Exercise!)
                 .ToListAsync();
 
