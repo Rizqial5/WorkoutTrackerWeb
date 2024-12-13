@@ -27,6 +27,14 @@ using WorkoutTracker.Backend.Models;
 
             });
 
+            modelBuilder.Entity<ExerciseSet>(entity =>
+            {
+                entity.HasKey(s => s.ExerciseSetId);
+
+
+            });
+
+
             modelBuilder.Entity<ExerciseData>().HasData(
 
                 new ExerciseData { ExerciseId = 1, Name = "Bench Press", CategoryWorkout = CategoryWorkout.Strength, MuscleGroup = MuscleGroup.Chest},
@@ -39,4 +47,5 @@ using WorkoutTracker.Backend.Models;
 
         public DbSet<WorkoutPlans> WorkoutPlans { get; set; } = default!;
         public DbSet<ExerciseData> ExerciseDatas { get; set; } = default!;
+        public DbSet<ExerciseSet> ExerciseSets { get; set; } = default!;
     }
