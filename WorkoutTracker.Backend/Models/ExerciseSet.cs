@@ -15,12 +15,12 @@ namespace WorkoutTracker.Backend.Models
         public int Repetitions { get; set; }
 
         [Required]
-        public string Weight { get; set; }
+        public string? Weight { get; set; }
 
         [ForeignKey("ExerciseId")]
         public int ExerciseId { get; set; }
 
-        public ExerciseData Exercise { get; set; }
+        public ExerciseData? Exercise { get; set; }
 
     }
 }
