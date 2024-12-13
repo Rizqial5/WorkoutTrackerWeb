@@ -26,6 +26,7 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var workoutPlans= await _context.WorkoutPlans
                 .Include(wp => wp.ExerciseSets)
+                    .ThenInclude(s=>s.Exercise)
                 .Select(wp => new
                 {
                     wp.PlanId,
@@ -71,6 +72,7 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var workoutPlan = _context.WorkoutPlans
                 .Include(wp => wp.ExerciseSets)
+                    .ThenInclude(exerciseSet => exerciseSet.Exercise!)
                 .FirstOrDefault(wp => wp.PlanId == id);
 
             if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
@@ -147,6 +149,7 @@ namespace WorkoutTracker.Backend.Controllers
 
             var exercises = await _context.ExerciseSets
                 .Where(e => workoutPlansRequest.ExercisesCollection.Contains(e.ExerciseSetId))
+                .Include(exerciseSet => exerciseSet.Exercise!)
                 .ToListAsync();
 
             workoutPlans.ExerciseSets = exercises;
