@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WorkoutTracker.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241213070348_FixRelationship")]
+    partial class FixRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,9 @@ namespace WorkoutTracker.Backend.Migrations
                     b.Property<int>("CategoryWorkout")
                         .HasColumnType("int");
 
+                    b.Property<int>("ExerciseSetId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MuscleGroup")
                         .HasColumnType("int");
 
@@ -63,6 +69,7 @@ namespace WorkoutTracker.Backend.Migrations
                         {
                             ExerciseId = 1,
                             CategoryWorkout = 1,
+                            ExerciseSetId = 0,
                             MuscleGroup = 1,
                             Name = "Bench Press"
                         },
@@ -70,6 +77,7 @@ namespace WorkoutTracker.Backend.Migrations
                         {
                             ExerciseId = 2,
                             CategoryWorkout = 1,
+                            ExerciseSetId = 0,
                             MuscleGroup = 3,
                             Name = "Squat"
                         },
@@ -77,6 +85,7 @@ namespace WorkoutTracker.Backend.Migrations
                         {
                             ExerciseId = 3,
                             CategoryWorkout = 1,
+                            ExerciseSetId = 0,
                             MuscleGroup = 1,
                             Name = "Dumble Press"
                         },
@@ -84,6 +93,7 @@ namespace WorkoutTracker.Backend.Migrations
                         {
                             ExerciseId = 4,
                             CategoryWorkout = 1,
+                            ExerciseSetId = 0,
                             MuscleGroup = 3,
                             Name = "RDL (Romanian Deadlift)"
                         });

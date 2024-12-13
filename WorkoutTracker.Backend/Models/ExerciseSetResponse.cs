@@ -1,13 +1,12 @@
 ﻿namespace WorkoutTracker.Backend.Models
 {
-    public class CreateExerciseSetRequest
+    public class ExerciseSetResponse
     {
+        public int ExerciseSetId { get; set; }
         public string ExerciseSetName { get; set; }
-        public int Set { get; set; }
-
         public int Repetitions { get; set; }
-
+        public int Set { get; set; }
         public string Weight { get; set; }
-        public int ExerciseId { get; set; }
+        public ExerciseDataResponse Exercise { get; set; }
     }
 }

@@ -24,39 +24,42 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
-            var workoutPlans= await _context.WorkoutPlans
+            var workoutPlans = await _context.WorkoutPlans
                 .Include(wp => wp.ExerciseSets)
-                    .ThenInclude(s=>s.Exercise)
-                .Select(wp => new
-                {
-                    wp.PlanId,
-                    wp.PlanName,
-                    ExerciseSets = wp.ExerciseSets
-                        .Select(e => new
+                .ThenInclude(s => s.Exercise)
+                .ToListAsync();
+
+            var response = workoutPlans.Select(wp => new WorkoutPlanResponse 
+            {   
+                    PlanId = wp.PlanId,
+                    PlanName = wp.PlanName,
+                    ScheduledTime = wp.ScheduledTime,
+                    ExerciseSets = wp.ExerciseSets.Select(es=> new ExerciseSetResponse
+                    {
+                        ExerciseSetId = es.ExerciseSetId,
+                        ExerciseSetName = es.ExerciseSetName,
+                        Repetitions = es.Repetitions,
+                        Set = es.Set,
+                        Exercise = new ExerciseDataResponse
                         {
-                            e.ExerciseSetId, 
-                            e.ExerciseSetName,
-                            Exercise = new
-                            {
-                                e.Exercise!.Name,
-                                e.Exercise!.CategoryWorkout,
-                                e.Exercise!.MuscleGroup
-                            },
-                            e.Repetitions,
-                            e.Set,
-                            
-                        })
+                            Name = es.Exercise!.Name!,
+                            CategoryWorkout = es.Exercise.CategoryWorkout,
+                            MuscleGroup = es.Exercise.MuscleGroup
+                        }
+                    }).ToList()
+            });
 
-                }).ToListAsync();
-
-            return Ok(workoutPlans);   
+            return Ok(response);   
         }
 
         // GET: api/WorkoutPlans/5
         [HttpGet("{id}")]
         public async Task<ActionResult<WorkoutPlans>> GetWorkoutPlans(int id)
         {
-            var workoutPlans = await _context.WorkoutPlans.FindAsync(id);
+            var workoutPlans = await _context.WorkoutPlans
+                .Include(wp => wp.ExerciseSets)
+                .ThenInclude(es => es.Exercise)
+                .FirstOrDefaultAsync(wp => wp.PlanId == id);
 
             if (workoutPlans == null)
             {
@@ -93,25 +96,24 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = new
+            var response = new WorkoutPlanResponse
             {
-                workoutPlan.PlanId,
-                workoutPlan.PlanName,
-                Exercises = workoutPlan.ExerciseSets
-                    .Select(e => new 
-                       {
-                        e.ExerciseSetId,
-                        e.ExerciseSetName,
-                        Exercise = new
-                        {
-                            e.Exercise!.Name,
-                            e.Exercise!.CategoryWorkout,
-                            e.Exercise!.MuscleGroup
-                        },
-                        e.Repetitions,
-                        e.Set,
-                    })
-                    .ToList()
+                PlanName = workoutPlan.PlanName,
+                PlanId = workoutPlan.PlanId,
+                ScheduledTime = workoutPlan.ScheduledTime,
+                ExerciseSets = workoutPlan.ExerciseSets.Select(es => new ExerciseSetResponse
+                {
+                    ExerciseSetId = es.ExerciseSetId,
+                    ExerciseSetName = es.ExerciseSetName,
+                    Repetitions = es.Repetitions,
+                    Set = es.Set,
+                    Exercise = new ExerciseDataResponse
+                    {
+                        Name = es.Exercise!.Name!,
+                        CategoryWorkout = es.Exercise.CategoryWorkout,
+                        MuscleGroup = es.Exercise.MuscleGroup
+                    }
+                }).ToList()
             };
 
 
@@ -150,8 +152,8 @@ namespace WorkoutTracker.Backend.Controllers
             var workoutPlans = new WorkoutPlans { PlanName = workoutPlansRequest.PlansName };
 
             var exercises = await _context.ExerciseSets
-                .Where(e => workoutPlansRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseSetId))
                 .Include(exerciseSet => exerciseSet.Exercise!)
+                .Where(e => workoutPlansRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseSetId))
                 .ToListAsync();
 
             workoutPlans.ExerciseSets = exercises;
@@ -159,25 +161,24 @@ namespace WorkoutTracker.Backend.Controllers
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();
 
-            var response = new
+            var response = new WorkoutPlanResponse
             {
-                workoutPlans.PlanId,
-                workoutPlans.PlanName,
-                Exercises = workoutPlans.ExerciseSets
-                    .Select(e => new
+                PlanName = workoutPlans.PlanName,
+                PlanId = workoutPlans.PlanId,
+                ScheduledTime = workoutPlans.ScheduledTime,
+                ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
+                {
+                    ExerciseSetId = es.ExerciseSetId,
+                    ExerciseSetName = es.ExerciseSetName,
+                    Repetitions = es.Repetitions,
+                    Set = es.Set,
+                    Exercise = new ExerciseDataResponse
                     {
-                        e.ExerciseSetId,
-                        e.ExerciseSetName,
-                        Exercise = new
-                        {
-                            e.Exercise!.Name,
-                            e.Exercise!.CategoryWorkout,
-                            e.Exercise!.MuscleGroup
-                        },
-                        e.Repetitions,
-                        e.Set,
-                    })
-                    .ToList()
+                        Name = es.Exercise!.Name!,
+                        CategoryWorkout = es.Exercise.CategoryWorkout,
+                        MuscleGroup = es.Exercise.MuscleGroup
+                    }
+                }).ToList()
             };
 
             return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId }, response);

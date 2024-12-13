@@ -24,21 +24,59 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseSet>>> GetExerciseSets()
         {
-            return await _context.ExerciseSets.ToListAsync();
+            var exerciseSets = await _context.ExerciseSets
+                .Include(es => es.Exercise)
+                .ToListAsync();
+
+            var response = exerciseSets.Select(es => new ExerciseSetResponse
+            {
+                ExerciseSetId = es.ExerciseSetId,
+                ExerciseSetName = es.ExerciseSetName,
+                Exercise = new ExerciseDataResponse
+                {
+                    Name = es!.Exercise!.Name!,
+                    CategoryWorkout = es.Exercise.CategoryWorkout,
+                    MuscleGroup = es.Exercise.MuscleGroup
+                },
+                Set = es.Set,
+                Repetitions = es.Repetitions,
+                Weight = es.Weight,
+
+            });
+
+            return Ok(response);
         }
 
         // GET: api/ExerciseSets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ExerciseSet>> GetExerciseSet(int id)
         {
-            var exerciseSet = await _context.ExerciseSets.FindAsync(id);
+            var exerciseSet = await _context!.ExerciseSets!
+                .Include(es => es.Exercise)
+                .FirstOrDefaultAsync(es => es.ExerciseSetId == id);
 
             if (exerciseSet == null)
             {
                 return NotFound();
             }
 
-            return exerciseSet;
+            var response = new ExerciseSetResponse
+            {
+                ExerciseSetId = exerciseSet.ExerciseSetId,
+                ExerciseSetName = exerciseSet.ExerciseSetName,
+                Exercise = new ExerciseDataResponse
+                {
+                    Id = exerciseSet.Exercise.ExerciseId,
+                    Name = exerciseSet.Exercise.Name,
+                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
+                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
+                },
+                Set = exerciseSet.Set,
+                Repetitions = exerciseSet.Repetitions,
+                Weight = exerciseSet.Weight,
+            };
+
+            return Ok(response);
         }
 
         // PUT: api/ExerciseSets/5
@@ -75,12 +113,46 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/ExerciseSets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExerciseSet>> PostExerciseSet(ExerciseSet exerciseSet)
+        public async Task<ActionResult<ExerciseSet>> PostExerciseSet(CreateExerciseSetRequest exerciseSetRequest)
         {
+            
+
+            var exercise = await _context.ExerciseDatas
+                    .FindAsync(exerciseSetRequest.ExerciseId);
+
+            var exerciseSet = new ExerciseSet
+            {
+                ExerciseSetName = exerciseSetRequest.ExerciseSetName,
+                Repetitions = exerciseSetRequest.Repetitions,
+                Set = exerciseSetRequest.Set,
+                Weight = exerciseSetRequest.Weight,
+                ExerciseId = exerciseSetRequest.ExerciseId,
+                
+            };
+            
+
             _context.ExerciseSets.Add(exerciseSet);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetExerciseSet", new { id = exerciseSet.ExerciseSetId }, exerciseSet);
+            var response = new ExerciseSetResponse
+            {
+                ExerciseSetId = exerciseSet.ExerciseSetId,
+                ExerciseSetName = exerciseSet.ExerciseSetName,
+                Exercise = new ExerciseDataResponse
+                {
+                    Name = exerciseSet!.Exercise!.Name!,
+                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
+                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
+
+                },
+                Set = exerciseSet.Set,
+                Repetitions = exerciseSet.Repetitions,
+                Weight = exerciseSet.Weight
+                
+            };
+
+            return CreatedAtAction("GetExerciseSet", new { id = exerciseSet.ExerciseSetId }, response);
         }
 
         // DELETE: api/ExerciseSets/5

@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace WorkoutTracker.Backend.Models
 {
@@ -17,10 +18,8 @@ namespace WorkoutTracker.Backend.Models
         [Required]
         public MuscleGroup MuscleGroup { get; set; }
 
-
-        [ForeignKey("ExerciseSetId")]
-        public int ExerciseSetId { get; set; }
-        public ICollection<ExerciseSet>? ExerciseSets { get; set; }
+        [JsonIgnore]
+        public ICollection<ExerciseSet> ExerciseSets { get; set; }
     }
 
     public enum CategoryWorkout
