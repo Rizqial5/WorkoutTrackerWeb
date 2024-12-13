@@ -25,18 +25,24 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
             var workoutPlans= await _context.WorkoutPlans
-                .Include(wp => wp.Exercises)
+                .Include(wp => wp.ExerciseSets)
                 .Select(wp => new
                 {
                     wp.PlanId,
                     wp.PlanName,
-                    Exercises = wp.Exercises
+                    ExerciseSets = wp.ExerciseSets
                         .Select(e => new
                         {
-                            e.ExerciseId, 
-                            e.Name, 
-                            e.CategoryWorkout, 
-                            e.MuscleGroup
+                            e.ExerciseSetId, 
+                            Exercise = new
+                            {
+                                e.Exercise!.Name,
+                                e.Exercise!.CategoryWorkout,
+                                e.Exercise!.MuscleGroup
+                            },
+                            e.Repetitions,
+                            e.Set,
+                            
                         })
 
                 }).ToListAsync();
@@ -64,21 +70,21 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlansPostRequest workoutRequest)
         {
             var workoutPlan = _context.WorkoutPlans
-                .Include(wp => wp.Exercises)
+                .Include(wp => wp.ExerciseSets)
                 .FirstOrDefault(wp => wp.PlanId == id);
 
             if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
 
             workoutPlan.PlanName = workoutRequest.PlansName;
 
-            var newExercises = _context.ExerciseDatas
+            var newExercises = _context.ExerciseSets
                 .Where(e => workoutRequest.ExercisesCollection.Contains(e.ExerciseId));
 
             foreach (var exercise in newExercises)
             {
-                if (workoutPlan!.Exercises!.All(e => e.ExerciseId != exercise.ExerciseId))
+                if (workoutPlan!.ExerciseSets!.All(e => e.ExerciseSetId != exercise.ExerciseSetId))
                 {
-                    workoutPlan.Exercises.Add(exercise);
+                    workoutPlan.ExerciseSets.Add(exercise);
                 }
             }
 
@@ -88,14 +94,19 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 workoutPlan.PlanId,
                 workoutPlan.PlanName,
-                Exercises = workoutPlan.Exercises
+                Exercises = workoutPlan.ExerciseSets
                     .Select(e => new 
-                       { 
-                            e.ExerciseId, 
-                            e.Name,
-                            e.CategoryWorkout,
-                            e.MuscleGroup
-                        })
+                       {
+                        e.ExerciseSetId,
+                        Exercise = new
+                        {
+                            e.Exercise!.Name,
+                            e.Exercise!.CategoryWorkout,
+                            e.Exercise!.MuscleGroup
+                        },
+                        e.Repetitions,
+                        e.Set,
+                    })
                     .ToList()
             };
 
@@ -107,7 +118,7 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult> SetScheduleWorkout(int id, DateTime setDateTime)
         {
             var workoutPlan = _context.WorkoutPlans
-                .Include(wp => wp.Exercises)
+                .Include(wp => wp.ExerciseSets)
                 .FirstOrDefault(wp => wp.PlanId == id);
 
             if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
@@ -134,11 +145,11 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var workoutPlans = new WorkoutPlans { PlanName = workoutPlansRequest.PlansName };
 
-            var exercises = await _context.ExerciseDatas
-                .Where(e => workoutPlansRequest.ExercisesCollection.Contains(e.ExerciseId))
+            var exercises = await _context.ExerciseSets
+                .Where(e => workoutPlansRequest.ExercisesCollection.Contains(e.ExerciseSetId))
                 .ToListAsync();
 
-            workoutPlans.Exercises = exercises;
+            workoutPlans.ExerciseSets = exercises;
 
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();
@@ -147,8 +158,19 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 workoutPlans.PlanId,
                 workoutPlans.PlanName,
-                Exercises = workoutPlans.Exercises
-                    .Select(e => new { e.ExerciseId, e.Name })
+                Exercises = workoutPlans.ExerciseSets
+                    .Select(e => new
+                    {
+                        e.ExerciseSetId,
+                        Exercise = new
+                        {
+                            e.Exercise!.Name,
+                            e.Exercise!.CategoryWorkout,
+                            e.Exercise!.MuscleGroup
+                        },
+                        e.Repetitions,
+                        e.Set,
+                    })
                     .ToList()
             };
 
