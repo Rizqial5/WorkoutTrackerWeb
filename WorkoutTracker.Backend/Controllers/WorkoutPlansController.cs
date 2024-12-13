@@ -58,7 +58,7 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var workoutPlans = await _context.WorkoutPlans
                 .Include(wp => wp.ExerciseSets)
-                .ThenInclude(es => es.Exercise)
+                    .ThenInclude(es => es.Exercise)
                 .FirstOrDefaultAsync(wp => wp.PlanId == id);
 
             if (workoutPlans == null)
@@ -66,7 +66,27 @@ namespace WorkoutTracker.Backend.Controllers
                 return NotFound();
             }
 
-            return workoutPlans;
+            var response = new WorkoutPlanResponse
+            {
+                PlanId = workoutPlans.PlanId,
+                PlanName = workoutPlans.PlanName,
+                ScheduledTime = workoutPlans.ScheduledTime,
+                ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
+                {
+                    ExerciseSetId = es.ExerciseSetId,
+                    ExerciseSetName = es.ExerciseSetName,
+                    Repetitions = es.Repetitions,
+                    Set = es.Set,
+                    Exercise = new ExerciseDataResponse
+                    {
+                        Name = es.Exercise!.Name!,
+                        CategoryWorkout = es.Exercise.CategoryWorkout,
+                        MuscleGroup = es.Exercise.MuscleGroup
+                    }
+                }).ToList()
+            };
+
+            return Ok(response);
         }
 
         // PUT: api/WorkoutPlans/5
