@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using WorkoutTracker.Backend.Models;
 using WorkoutTracker.Backend.Utilities;
 
@@ -25,26 +26,28 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
-            var workoutPlans = await _context.WorkoutPlans
-                .Include(wp => wp.ExerciseSets)
-                    .ThenInclude(s => s.Exercise)
-                .Include(wp=>wp.ScheduledTime)
-                .ToListAsync();
+            var workoutPlans =await WorkoutPlansEnumerable().ToListAsync();
+                
 
             var response = workoutPlans.Select(ResponsesHelper.WorkoutPlanResponse);
 
             return Ok(response);   
         }
 
+        private IIncludableQueryable<WorkoutPlans, ExerciseData?> WorkoutPlansEnumerable()
+        {
+            var workoutPlans = _context.WorkoutPlans
+                .Include(wp => wp.ScheduledTime)
+                .Include(wp => wp.ExerciseSets)
+                .ThenInclude(s => s.Exercise);
+            return workoutPlans;
+        }
+
         // GET: api/WorkoutPlans/5
         [HttpGet("{id}")]
         public async Task<ActionResult<WorkoutPlans>> GetWorkoutPlans(int id)
         {
-            var workoutPlans = await _context.WorkoutPlans
-                .Include(wp=>wp.ScheduledTime)
-                .Include(wp => wp.ExerciseSets)
-                    .ThenInclude(es => es.Exercise)
-                .FirstOrDefaultAsync(wp => wp.PlanId == id);
+            var workoutPlans = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
 
             if (workoutPlans == null)
             {
@@ -62,10 +65,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlansPostRequest workoutRequest)
         {
-            var workoutPlan = _context.WorkoutPlans
-                .Include(wp => wp.ExerciseSets)
-                    .ThenInclude(exerciseSet => exerciseSet.Exercise!)
-                .FirstOrDefault(wp => wp.PlanId == id);
+            var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
 
             if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
 
@@ -86,6 +86,23 @@ namespace WorkoutTracker.Backend.Controllers
 
             var response = ResponsesHelper.WorkoutPlanResponse(workoutPlan);
 
+
+            return Ok(response);
+        }
+
+        [HttpPut("{id}/done")]
+        public async Task<IActionResult> SetDoneWorkoutPlans(int id)
+        {
+            var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
+
+            if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
+            if (workoutPlan.PlanStatus == PlanStatus.Done) return BadRequest("Workout plans Has already set to done");
+
+            workoutPlan.PlanStatus = PlanStatus.Done;
+
+            await _context.SaveChangesAsync();
+
+            var response = $"{workoutPlan.PlanName} set to {workoutPlan.PlanStatus}"; 
 
             return Ok(response);
         }
