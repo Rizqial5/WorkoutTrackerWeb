@@ -38,14 +38,8 @@ namespace WorkoutTracker.Backend.Utilities
             {
                 Id = schedulePlans.Id,
                 PlannedDateTime = schedulePlans.ScheduleTime,
-                WorkoutPlanResponse = new WorkoutPlanResponse
-                {
-                    PlanId = schedulePlans.WorkoutPlansId,
-                    PlanName = schedulePlans.WorkoutPlan.PlanName,
-                    ExerciseSets = null,
-                    ScheduledTime = null
-
-                }
+                PlanId = schedulePlans.WorkoutPlan.PlanId,
+                PlanName = schedulePlans.WorkoutPlan.PlanName
             };
             return response;
         }
