@@ -24,7 +24,27 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSchedulePlans()
         {
-            return await _context.SchedulePlans.ToListAsync();
+            var schedulePlans = await _context.SchedulePlans
+                .Include(sp => sp.WorkoutPlan)
+                    .ThenInclude(wp => wp.ExerciseSets)
+                .ToListAsync();
+
+            var response = schedulePlans.Select(sp => new SchedulePlansResponse
+            {
+                Id = sp.Id,
+                PlannedDateTime = sp.ScheduleTime,
+                WorkoutPlanResponse = new WorkoutPlanResponse
+                {
+                    PlanId = sp.WorkoutPlansId,
+                    PlanName = sp.WorkoutPlan.PlanName,
+                    ExerciseSets = null,
+                    ScheduledTime = null
+
+                }
+            });
+            
+
+            return Ok(response);
         }
 
         // GET: api/SchedulePlans/5
