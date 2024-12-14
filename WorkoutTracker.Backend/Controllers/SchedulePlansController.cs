@@ -104,23 +104,7 @@ namespace WorkoutTracker.Backend.Controllers
             return CreatedAtAction("GetSchedulePlans", new { id = schedulePlans.Id }, response);
         }
 
-        private static SchedulePlansResponse SchedulePlansResponse(SchedulePlans schedulePlans)
-        {
-            var response = new SchedulePlansResponse
-            {
-                Id = schedulePlans.Id,
-                PlannedDateTime = schedulePlans.ScheduleTime,
-                WorkoutPlanResponse = new WorkoutPlanResponse
-                {
-                    PlanId = schedulePlans.WorkoutPlansId,
-                    PlanName = schedulePlans.WorkoutPlan.PlanName,
-                    ExerciseSets = null,
-                    ScheduledTime = null
-                    
-                }
-            };
-            return response;
-        }
+        
 
         // DELETE: api/SchedulePlans/5
         [HttpDelete("{id}")]
@@ -138,9 +122,23 @@ namespace WorkoutTracker.Backend.Controllers
             return NoContent();
         }
 
-        private bool SchedulePlansExists(int id)
+        private static SchedulePlansResponse SchedulePlansResponse(SchedulePlans schedulePlans)
         {
-            return _context.SchedulePlans.Any(e => e.Id == id);
+            var response = new SchedulePlansResponse
+            {
+                Id = schedulePlans.Id,
+                PlannedDateTime = schedulePlans.ScheduleTime,
+                WorkoutPlanResponse = new WorkoutPlanResponse
+                {
+                    PlanId = schedulePlans.WorkoutPlansId,
+                    PlanName = schedulePlans.WorkoutPlan.PlanName,
+                    ExerciseSets = null,
+                    ScheduledTime = null
+
+                }
+            };
+            return response;
         }
+
     }
 }
