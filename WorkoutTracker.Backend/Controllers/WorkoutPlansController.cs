@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
 {
@@ -34,7 +35,7 @@ namespace WorkoutTracker.Backend.Controllers
             {   
                     PlanId = wp.PlanId,
                     PlanName = wp.PlanName,
-                    //ScheduledTime = wp.ScheduledTime,
+                    ScheduledTime = wp.ScheduledTime.Select(ResponsesHelper.SchedulePlansResponse).ToList(),
                     ExerciseSets = wp.ExerciseSets.Select(es=> new ExerciseSetResponse
                     {
                         ExerciseSetId = es.ExerciseSetId,

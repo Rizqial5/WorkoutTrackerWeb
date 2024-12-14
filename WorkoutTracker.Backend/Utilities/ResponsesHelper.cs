@@ -21,5 +21,26 @@ namespace WorkoutTracker.Backend.Utilities
             };
             return response;
         }
+
+        public static ExerciseSetResponse ExerciseSetResponse(ExerciseSet exerciseSet)
+        {
+            var response = new ExerciseSetResponse
+            {
+                ExerciseSetId = exerciseSet.ExerciseSetId,
+                ExerciseSetName = exerciseSet.ExerciseSetName,
+                Exercise = new ExerciseDataResponse
+                {
+                    Name = exerciseSet!.Exercise!.Name!,
+                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
+                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
+
+                },
+                Set = exerciseSet.Set,
+                Repetitions = exerciseSet.Repetitions,
+                Weight = exerciseSet.Weight
+
+            };
+            return response;
+        }
     }
 }

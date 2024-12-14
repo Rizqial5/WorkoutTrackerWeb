@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
 {
@@ -28,21 +29,7 @@ namespace WorkoutTracker.Backend.Controllers
                 .Include(es => es.Exercise)
                 .ToListAsync();
 
-            var response = exerciseSets.Select(es => new ExerciseSetResponse
-            {
-                ExerciseSetId = es.ExerciseSetId,
-                ExerciseSetName = es.ExerciseSetName,
-                Exercise = new ExerciseDataResponse
-                {
-                    Name = es!.Exercise!.Name!,
-                    CategoryWorkout = es.Exercise.CategoryWorkout,
-                    MuscleGroup = es.Exercise.MuscleGroup
-                },
-                Set = es.Set,
-                Repetitions = es.Repetitions,
-                Weight = es.Weight,
-
-            });
+            var response = exerciseSets.Select(ResponsesHelper.ExerciseSetResponse);
 
             return Ok(response);
         }
@@ -60,21 +47,7 @@ namespace WorkoutTracker.Backend.Controllers
                 return NotFound();
             }
 
-            var response = new ExerciseSetResponse
-            {
-                ExerciseSetId = exerciseSet.ExerciseSetId,
-                ExerciseSetName = exerciseSet.ExerciseSetName,
-                Exercise = new ExerciseDataResponse
-                {
-                    Id = exerciseSet.Exercise.ExerciseId,
-                    Name = exerciseSet.Exercise.Name,
-                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
-                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
-                },
-                Set = exerciseSet.Set,
-                Repetitions = exerciseSet.Repetitions,
-                Weight = exerciseSet.Weight,
-            };
+            var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
 
             return Ok(response);
         }
@@ -102,21 +75,7 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = new ExerciseSetResponse
-            {
-                ExerciseSetId = exerciseSet.ExerciseSetId,
-                ExerciseSetName = exerciseSet.ExerciseSetName,
-                Exercise = new ExerciseDataResponse
-                {
-                    Id = exerciseSet.Exercise.ExerciseId,
-                    Name = exerciseSet.Exercise.Name,
-                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
-                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
-                },
-                Set = exerciseSet.Set,
-                Repetitions = exerciseSet.Repetitions,
-                Weight = exerciseSet.Weight,
-            };
+            var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
 
             return Ok(response);
         }
@@ -148,25 +107,12 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = new ExerciseSetResponse
-            {
-                ExerciseSetId = exerciseSet.ExerciseSetId,
-                ExerciseSetName = exerciseSet.ExerciseSetName,
-                Exercise = new ExerciseDataResponse
-                {
-                    Name = exerciseSet!.Exercise!.Name!,
-                    CategoryWorkout = exerciseSet.Exercise.CategoryWorkout,
-                    MuscleGroup = exerciseSet.Exercise.MuscleGroup
-
-                },
-                Set = exerciseSet.Set,
-                Repetitions = exerciseSet.Repetitions,
-                Weight = exerciseSet.Weight
-                
-            };
+            var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
 
             return CreatedAtAction("GetExerciseSet", new { id = exerciseSet.ExerciseSetId }, response);
         }
+
+        
 
         // DELETE: api/ExerciseSets/5
         [HttpDelete("{id}")]
