@@ -53,6 +53,20 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
+        [HttpGet("sort")]
+        public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSortedPlans()
+        {
+            var schedulePlans = await _context.SchedulePlans
+                .Include(sp => sp.WorkoutPlan)
+                .OrderBy(sp => sp.ScheduleTime)
+                .ToListAsync();
+
+            var response = schedulePlans.Select(ResponsesHelper.SchedulePlansResponse);
+
+            return Ok(response);
+
+        }
+
         // PUT: api/SchedulePlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

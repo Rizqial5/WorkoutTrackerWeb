@@ -56,6 +56,7 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
+
         // PUT: api/WorkoutPlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -89,31 +90,6 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
-        
-
-        [HttpPut("schedule/{id}")]
-        public async Task<ActionResult> SetScheduleWorkout(int id, DateTime setDateTime)
-        {
-            var workoutPlan = _context.WorkoutPlans
-                .Include(wp => wp.ExerciseSets)
-                .FirstOrDefault(wp => wp.PlanId == id);
-
-            if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
-
-            //workoutPlan.ScheduledTime = setDateTime;
-
-            await _context.SaveChangesAsync();
-
-            var response = new
-            {
-                workoutPlan.PlanId,
-                workoutPlan.PlanName,
-                workoutPlan.ScheduledTime
-            };
-
-            return Ok(response);
-
-        }
 
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
