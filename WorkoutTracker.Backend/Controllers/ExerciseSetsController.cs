@@ -127,7 +127,7 @@ namespace WorkoutTracker.Backend.Controllers
             _context.ExerciseSets.Remove(exerciseSet);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Data deleted successfully");
         }
 
         

@@ -120,25 +120,7 @@ namespace WorkoutTracker.Backend.Controllers
             _context.SchedulePlans.Remove(schedulePlans);
             await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
-
-        private static SchedulePlansResponse SchedulePlansResponse(SchedulePlans schedulePlans)
-        {
-            var response = new SchedulePlansResponse
-            {
-                Id = schedulePlans.Id,
-                PlannedDateTime = schedulePlans.ScheduleTime,
-                WorkoutPlanResponse = new WorkoutPlanResponse
-                {
-                    PlanId = schedulePlans.WorkoutPlansId,
-                    PlanName = schedulePlans.WorkoutPlan.PlanName,
-                    ExerciseSets = null,
-                    ScheduledTime = null
-
-                }
-            };
-            return response;
+            return Ok("Data deleted successfully");
         }
 
     }

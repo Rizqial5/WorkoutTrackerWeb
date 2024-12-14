@@ -31,25 +31,7 @@ namespace WorkoutTracker.Backend.Controllers
                 .Include(wp=>wp.ScheduledTime)
                 .ToListAsync();
 
-            var response = workoutPlans.Select(wp => new WorkoutPlanResponse 
-            {   
-                    PlanId = wp.PlanId,
-                    PlanName = wp.PlanName,
-                    ScheduledTime = wp.ScheduledTime.Select(ResponsesHelper.SchedulePlansResponse).ToList(),
-                    ExerciseSets = wp.ExerciseSets.Select(es=> new ExerciseSetResponse
-                    {
-                        ExerciseSetId = es.ExerciseSetId,
-                        ExerciseSetName = es.ExerciseSetName,
-                        Repetitions = es.Repetitions,
-                        Set = es.Set,
-                        Exercise = new ExerciseDataResponse
-                        {
-                            Name = es.Exercise!.Name!,
-                            CategoryWorkout = es.Exercise.CategoryWorkout,
-                            MuscleGroup = es.Exercise.MuscleGroup
-                        }
-                    }).ToList()
-            });
+            var response = workoutPlans.Select(ResponsesHelper.WorkoutPlanResponse);
 
             return Ok(response);   
         }
@@ -68,25 +50,7 @@ namespace WorkoutTracker.Backend.Controllers
                 return NotFound();
             }
 
-            var response = new WorkoutPlanResponse
-            {
-                PlanId = workoutPlans.PlanId,
-                PlanName = workoutPlans.PlanName,
-                //ScheduledTime = workoutPlans.ScheduledTime,
-                ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
-                {
-                    ExerciseSetId = es.ExerciseSetId,
-                    ExerciseSetName = es.ExerciseSetName,
-                    Repetitions = es.Repetitions,
-                    Set = es.Set,
-                    Exercise = new ExerciseDataResponse
-                    {
-                        Name = es.Exercise!.Name!,
-                        CategoryWorkout = es.Exercise.CategoryWorkout,
-                        MuscleGroup = es.Exercise.MuscleGroup
-                    }
-                }).ToList()
-            };
+            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlans);
 
             return Ok(response);
         }
@@ -118,29 +82,13 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = new WorkoutPlanResponse
-            {
-                PlanName = workoutPlan.PlanName,
-                PlanId = workoutPlan.PlanId,
-                //ScheduledTime = workoutPlan.ScheduledTime,
-                ExerciseSets = workoutPlan.ExerciseSets.Select(es => new ExerciseSetResponse
-                {
-                    ExerciseSetId = es.ExerciseSetId,
-                    ExerciseSetName = es.ExerciseSetName,
-                    Repetitions = es.Repetitions,
-                    Set = es.Set,
-                    Exercise = new ExerciseDataResponse
-                    {
-                        Name = es.Exercise!.Name!,
-                        CategoryWorkout = es.Exercise.CategoryWorkout,
-                        MuscleGroup = es.Exercise.MuscleGroup
-                    }
-                }).ToList()
-            };
+            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlan);
 
 
             return Ok(response);
         }
+
+        
 
         [HttpPut("schedule/{id}")]
         public async Task<ActionResult> SetScheduleWorkout(int id, DateTime setDateTime)
@@ -183,25 +131,7 @@ namespace WorkoutTracker.Backend.Controllers
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();
 
-            var response = new WorkoutPlanResponse
-            {
-                PlanName = workoutPlans.PlanName,
-                PlanId = workoutPlans.PlanId,
-                //ScheduledTime = workoutPlans.ScheduledTime,
-                ExerciseSets = workoutPlans.ExerciseSets.Select(es => new ExerciseSetResponse
-                {
-                    ExerciseSetId = es.ExerciseSetId,
-                    ExerciseSetName = es.ExerciseSetName,
-                    Repetitions = es.Repetitions,
-                    Set = es.Set,
-                    Exercise = new ExerciseDataResponse
-                    {
-                        Name = es.Exercise!.Name!,
-                        CategoryWorkout = es.Exercise.CategoryWorkout,
-                        MuscleGroup = es.Exercise.MuscleGroup
-                    }
-                }).ToList()
-            };
+            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlans);
 
             return CreatedAtAction("GetWorkoutPlans", new { id = workoutPlans.PlanId }, response);
         }
@@ -219,7 +149,7 @@ namespace WorkoutTracker.Backend.Controllers
             _context.WorkoutPlans.Remove(workoutPlans);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Data deleted successfully");
         }
 
 
