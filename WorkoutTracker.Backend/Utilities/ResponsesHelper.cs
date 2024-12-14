@@ -37,6 +37,7 @@ namespace WorkoutTracker.Backend.Utilities
             {
                 Id = schedulePlans.Id,
                 PlannedDateTime = schedulePlans.ScheduleTime,
+                PlanStatus = schedulePlans.PlanStatus,
                 PlanId = schedulePlans.WorkoutPlan.PlanId,
                 PlanName = schedulePlans.WorkoutPlan.PlanName
             };
