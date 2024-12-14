@@ -27,19 +27,8 @@ namespace WorkoutTracker.Backend.Controllers
             var schedulePlans = await _context.SchedulePlans
                 .Include(sp => sp.WorkoutPlan).ToListAsync();
 
-            var response = schedulePlans.Select(sp => new SchedulePlansResponse
-            {
-                Id = sp.Id,
-                PlannedDateTime = sp.ScheduleTime,
-                WorkoutPlanResponse = new WorkoutPlanResponse
-                {
-                    PlanId = sp.WorkoutPlansId,
-                    PlanName = sp.WorkoutPlan.PlanName,
-                    ExerciseSets = null,
-                    ScheduledTime = null
-
-                }
-            });
+            var response = schedulePlans.Select(SchedulePlansResponse);
+            
             
 
             return Ok(response);
@@ -49,14 +38,18 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SchedulePlans>> GetSchedulePlans(int id)
         {
-            var schedulePlans = await _context.SchedulePlans.FindAsync(id);
+            var schedulePlans = await _context.SchedulePlans
+                .Include(sp=>sp.WorkoutPlan)
+                .FirstOrDefaultAsync(sp=> sp.Id == id);
 
             if (schedulePlans == null)
             {
                 return NotFound();
             }
 
-            return schedulePlans;
+            var response = SchedulePlansResponse(schedulePlans);
+
+            return Ok(response);
         }
 
         // PUT: api/SchedulePlans/5
@@ -111,6 +104,13 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
+            var response = SchedulePlansResponse(schedulePlans);
+
+            return CreatedAtAction("GetSchedulePlans", new { id = schedulePlans.Id }, response);
+        }
+
+        private static SchedulePlansResponse SchedulePlansResponse(SchedulePlans schedulePlans)
+        {
             var response = new SchedulePlansResponse
             {
                 Id = schedulePlans.Id,
@@ -124,8 +124,7 @@ namespace WorkoutTracker.Backend.Controllers
                     
                 }
             };
-
-            return CreatedAtAction("GetSchedulePlans", new { id = schedulePlans.Id }, response);
+            return response;
         }
 
         // DELETE: api/SchedulePlans/5
