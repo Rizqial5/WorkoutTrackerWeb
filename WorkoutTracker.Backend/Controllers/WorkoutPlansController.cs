@@ -59,6 +59,40 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id}/report")]
+        public async Task<ActionResult<WorkoutPlans>> GetPlanReport(int id)
+        {
+            var workoutPlans = await _context.WorkoutPlans
+                .Include(wp => wp.ExerciseSets)
+                .Include(wp => wp.ScheduledTime.Where(sp=> sp.PlanStatus == PlanStatus.Done))
+                .FirstOrDefaultAsync(wp => wp.PlanId == id);
+
+            if (workoutPlans == null) return NotFound("Workout Plan not found");
+            
+            int countWorkoutPlanDone = workoutPlans.ScheduledTime.Count();
+
+            var response = new
+            {
+                workoutPlans.PlanName,
+                ExerciseName = workoutPlans.ExerciseSets.Select(es => new
+                {
+                    es.ExerciseSetName
+
+                }).ToList(),
+                TotalWorkoutDone = countWorkoutPlanDone,
+                ScheduledPlans = workoutPlans.ScheduledTime.Select(sp => new
+                {
+                    sp.ScheduleTime,
+                    sp.PlanStatus
+                }).ToList()
+
+
+            };
+
+            return Ok(response);
+
+        }
+
 
         // PUT: api/WorkoutPlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
