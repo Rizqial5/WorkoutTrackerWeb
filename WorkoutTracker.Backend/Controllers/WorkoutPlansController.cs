@@ -41,6 +41,7 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult<WorkoutPlans>> GetWorkoutPlans(int id)
         {
             var workoutPlans = await _context.WorkoutPlans
+                .Include(wp=>wp.ScheduledTime)
                 .Include(wp => wp.ExerciseSets)
                     .ThenInclude(es => es.Exercise)
                 .FirstOrDefaultAsync(wp => wp.PlanId == id);
@@ -127,6 +128,7 @@ namespace WorkoutTracker.Backend.Controllers
                 .ToListAsync();
 
             workoutPlans.ExerciseSets = exercises;
+            workoutPlans.PlanStatus = PlanStatus.Pending;
 
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();

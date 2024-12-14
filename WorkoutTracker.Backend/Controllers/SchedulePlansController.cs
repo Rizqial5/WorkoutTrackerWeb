@@ -89,11 +89,14 @@ namespace WorkoutTracker.Backend.Controllers
 
             if (workoutPlans == null) return NotFound("Workout Plan not Found");
 
+            workoutPlans.PlanStatus = PlanStatus.Active;
+
             var schedulePlans = new SchedulePlans
             {
                 ScheduleTime = request.DateTime,
                 WorkoutPlansId = request.WorkoutPlansId
             };
+
             
 
             _context.SchedulePlans.Add(schedulePlans);
