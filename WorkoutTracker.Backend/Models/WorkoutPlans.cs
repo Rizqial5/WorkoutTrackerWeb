@@ -10,9 +10,6 @@ namespace WorkoutTracker.Backend.Models
         [Required]
         [StringLength(50)]
         public string PlanName { get; set; }
-
-        public PlanStatus PlanStatus { get; set; }
-
         
         public ICollection<SchedulePlans> ScheduledTime { get; set; }
 
@@ -21,10 +18,4 @@ namespace WorkoutTracker.Backend.Models
 
     }
 
-    public enum PlanStatus
-    {
-        Active,
-        Pending,
-        Done,
-    }
 }

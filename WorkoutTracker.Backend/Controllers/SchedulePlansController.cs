@@ -103,7 +103,7 @@ namespace WorkoutTracker.Backend.Controllers
 
             if (workoutPlans == null) return NotFound("Workout Plan not Found");
 
-            workoutPlans.PlanStatus = PlanStatus.Active;
+            //workoutPlans.PlanStatus = PlanStatus.Active;
 
             var schedulePlans = new SchedulePlans
             {

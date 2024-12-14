@@ -90,22 +90,22 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
-        [HttpPut("{id}/done")]
-        public async Task<IActionResult> SetDoneWorkoutPlans(int id)
-        {
-            var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
+        //[HttpPut("{id}/done")]
+        //public async Task<IActionResult> SetDoneWorkoutPlans(int id)
+        //{
+        //    var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
 
-            if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
-            if (workoutPlan.PlanStatus == PlanStatus.Done) return BadRequest("Workout plans Has already set to done");
+        //    if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
+        //    if (workoutPlan.PlanStatus == PlanStatus.Done) return BadRequest("Workout plans Has already set to done");
 
-            workoutPlan.PlanStatus = PlanStatus.Done;
+        //    workoutPlan.PlanStatus = PlanStatus.Done;
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            var response = $"{workoutPlan.PlanName} set to {workoutPlan.PlanStatus}"; 
+        //    var response = $"{workoutPlan.PlanName} set to {workoutPlan.PlanStatus}"; 
 
-            return Ok(response);
-        }
+        //    return Ok(response);
+        //}
 
 
         // POST: api/WorkoutPlans
@@ -121,7 +121,7 @@ namespace WorkoutTracker.Backend.Controllers
                 .ToListAsync();
 
             workoutPlans.ExerciseSets = exercises;
-            workoutPlans.PlanStatus = PlanStatus.Pending;
+            //workoutPlans.PlanStatus = PlanStatus.Pending;
 
             _context.WorkoutPlans.Add(workoutPlans);
             await _context.SaveChangesAsync();

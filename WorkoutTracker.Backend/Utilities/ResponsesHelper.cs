@@ -14,7 +14,6 @@ namespace WorkoutTracker.Backend.Utilities
                 PlanName = workoutPlan.PlanName,
                 PlanId = workoutPlan.PlanId,
                 ExerciseSets = workoutPlan.ExerciseSets.Select(ExerciseSetResponse).ToList(),
-                PlanStatus = workoutPlan.PlanStatus
             };
 
             if (workoutPlan.ScheduledTime != null)
