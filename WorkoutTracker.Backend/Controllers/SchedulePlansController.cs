@@ -55,32 +55,27 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/SchedulePlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedulePlans(int id, SchedulePlans schedulePlans)
+        public async Task<IActionResult> PutSchedulePlans(int id, SchedulePlansRequest request)
         {
-            if (id != schedulePlans.Id)
-            {
-                return BadRequest();
-            }
+            var schedulePlans = await _context.SchedulePlans
+                .Include(sp => sp.WorkoutPlan)
+                .FirstOrDefaultAsync(sp => sp.Id == id);
 
-            _context.Entry(schedulePlans).State = EntityState.Modified;
+            if (schedulePlans == null) return NotFound("Schedule Plans Not Found");
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SchedulePlansExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var workPlans = await _context.WorkoutPlans.FindAsync(request.WorkoutPlansId);
 
-            return NoContent();
+            if (workPlans == null) return NotFound();
+
+            schedulePlans.ScheduleTime = request.DateTime;
+            schedulePlans.WorkoutPlansId = request.WorkoutPlansId;
+
+            await _context.SaveChangesAsync();
+
+            var response = SchedulePlansResponse(schedulePlans);
+            
+
+            return Ok(response);
         }
 
         // POST: api/SchedulePlans
