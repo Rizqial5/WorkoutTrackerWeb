@@ -26,7 +26,8 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var workoutPlans = await _context.WorkoutPlans
                 .Include(wp => wp.ExerciseSets)
-                .ThenInclude(s => s.Exercise)
+                    .ThenInclude(s => s.Exercise)
+                .Include(wp=>wp.ScheduledTime)
                 .ToListAsync();
 
             var response = workoutPlans.Select(wp => new WorkoutPlanResponse 

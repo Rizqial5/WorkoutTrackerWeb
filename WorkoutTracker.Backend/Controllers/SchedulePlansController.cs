@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
 {
@@ -27,7 +28,7 @@ namespace WorkoutTracker.Backend.Controllers
             var schedulePlans = await _context.SchedulePlans
                 .Include(sp => sp.WorkoutPlan).ToListAsync();
 
-            var response = schedulePlans.Select(SchedulePlansResponse);
+            var response = schedulePlans.Select(ResponsesHelper.SchedulePlansResponse);
             
             
 
@@ -47,7 +48,7 @@ namespace WorkoutTracker.Backend.Controllers
                 return NotFound();
             }
 
-            var response = SchedulePlansResponse(schedulePlans);
+            var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
 
             return Ok(response);
         }
@@ -72,8 +73,8 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = SchedulePlansResponse(schedulePlans);
-            
+            var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
+
 
             return Ok(response);
         }
@@ -99,7 +100,7 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            var response = SchedulePlansResponse(schedulePlans);
+            var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
 
             return CreatedAtAction("GetSchedulePlans", new { id = schedulePlans.Id }, response);
         }
