@@ -90,23 +90,8 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
-        //[HttpPut("{id}/done")]
-        //public async Task<IActionResult> SetDoneWorkoutPlans(int id)
-        //{
-        //    var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
-
-        //    if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
-        //    if (workoutPlan.PlanStatus == PlanStatus.Done) return BadRequest("Workout plans Has already set to done");
-
-        //    workoutPlan.PlanStatus = PlanStatus.Done;
-
-        //    await _context.SaveChangesAsync();
-
-        //    var response = $"{workoutPlan.PlanName} set to {workoutPlan.PlanStatus}"; 
-
-        //    return Ok(response);
-        //}
-
+        
+        
 
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

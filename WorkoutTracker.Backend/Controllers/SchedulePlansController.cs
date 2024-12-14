@@ -93,6 +93,25 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
+        [HttpPut("{id}/done")]
+        public async Task<IActionResult> SetDoneWorkoutPlans(int id)
+        {
+            var schedulePlan = await _context.SchedulePlans
+                .Include(sp=> sp.WorkoutPlan)
+                .FirstOrDefaultAsync(sp => sp.Id == id);
+
+            if (schedulePlan == null) return NotFound(new { Message = "Schedule Plan Not Found" });
+            if (schedulePlan.PlanStatus == PlanStatus.Done) return BadRequest("Schedule plans Has already set to done");
+
+            schedulePlan.PlanStatus = PlanStatus.Done;
+
+            await _context.SaveChangesAsync();
+
+            var response = $"{schedulePlan.WorkoutPlan.PlanName} set to {schedulePlan.PlanStatus}";
+
+            return Ok(response);
+        }
+
         // POST: api/SchedulePlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
