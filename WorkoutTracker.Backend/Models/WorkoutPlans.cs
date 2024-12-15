@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WorkoutTracker.Backend.Models
 {
@@ -15,6 +17,10 @@ namespace WorkoutTracker.Backend.Models
 
         
         public ICollection<ExerciseSet> ExerciseSets { get; set; }
+
+        [ForeignKey("UserId")]
+        public string UserId { get; set; }
+        public IdentityUser User { get; set; }
 
     }
 

@@ -18,6 +18,8 @@ using WorkoutTracker.Backend.Models;
         {
             base.OnModelCreating(modelBuilder);
 
+            
+
             modelBuilder.Entity<WorkoutPlans>(entity =>
             {
                 entity.HasKey(w => w.PlanId);
@@ -29,6 +31,11 @@ using WorkoutTracker.Backend.Models;
 
                 entity.HasMany(e => e.ExerciseSets)
                     .WithMany(w => w.WorkoutPlans);
+
+                entity.HasOne(wp => wp.User)
+                    .WithMany()
+                    .HasForeignKey(wp => wp.UserId)
+                    .IsRequired();
             });
 
 

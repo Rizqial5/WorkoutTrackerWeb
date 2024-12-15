@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutTracker.Backend.Models
 {
@@ -28,6 +29,8 @@ namespace WorkoutTracker.Backend.Models
 
         [ForeignKey("PlansId")]
         public ICollection<WorkoutPlans> WorkoutPlans { get; set; }
+
+        
 
     }
 }
