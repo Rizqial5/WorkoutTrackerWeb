@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
@@ -11,22 +13,29 @@ using WorkoutTracker.Backend.Utilities;
 namespace WorkoutTracker.Backend.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class SchedulePlansController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public SchedulePlansController(ApplicationDbContext context)
+        public SchedulePlansController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/SchedulePlans
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSchedulePlans()
         {
+            var user = await _userManager.GetUserAsync(User);
+
             var schedulePlans = await _context.SchedulePlans
-                .Include(sp => sp.WorkoutPlan).ToListAsync();
+                .Where(sp=> sp.UserId == user.Id)
+                .Include(sp => sp.WorkoutPlan)
+                .ToListAsync();
 
             var response = schedulePlans.Select(ResponsesHelper.SchedulePlansResponse);
             
@@ -39,7 +48,10 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SchedulePlans>> GetSchedulePlans(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             var schedulePlans = await _context.SchedulePlans
+                .Where(sp=> sp.UserId == user.Id)
                 .Include(sp=>sp.WorkoutPlan)
                 .FirstOrDefaultAsync(sp=> sp.Id == id);
 
@@ -56,7 +68,10 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet("sort")]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSortedPlans()
         {
+            var user = await _userManager.GetUserAsync(User);
+
             var schedulePlans = await _context.SchedulePlans
+                .Where(sp => sp.UserId == user.Id)
                 .Include(sp => sp.WorkoutPlan)
                 .OrderBy(sp => sp.ScheduleTime)
                 .ToListAsync();
@@ -72,7 +87,10 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSchedulePlans(int id, SchedulePlansRequest request)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             var schedulePlans = await _context.SchedulePlans
+                .Where(sp => sp.UserId == user.Id)
                 .Include(sp => sp.WorkoutPlan)
                 .FirstOrDefaultAsync(sp => sp.Id == id);
 
@@ -96,7 +114,11 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPut("{id}/done")]
         public async Task<IActionResult> SetDoneWorkoutPlans(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
+
             var schedulePlan = await _context.SchedulePlans
+                .Where(sp => sp.UserId == user.Id)
                 .Include(sp=> sp.WorkoutPlan)
                 .FirstOrDefaultAsync(sp => sp.Id == id);
 
@@ -117,7 +139,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<SchedulePlans>> PostSchedulePlans(SchedulePlansRequest request)
         {
-
+            var user = await _userManager.GetUserAsync(User);
             var workoutPlans = await _context.WorkoutPlans.FindAsync(request.WorkoutPlansId);
 
             if (workoutPlans == null) return NotFound("Workout Plan not Found");
@@ -128,7 +150,8 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 ScheduleTime = request.DateTime,
                 PlanStatus = PlanStatus.Active,
-                WorkoutPlansId = request.WorkoutPlansId
+                WorkoutPlansId = request.WorkoutPlansId,
+                UserId = user.Id
             };
 
             
@@ -148,7 +171,12 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchedulePlans(int id)
         {
-            var schedulePlans = await _context.SchedulePlans.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+
+            var schedulePlans = await _context.SchedulePlans
+                .Where(sp => sp.UserId == user.Id)
+                .FirstOrDefaultAsync(sp => sp.Id == id);
+
             if (schedulePlans == null)
             {
                 return NotFound();
