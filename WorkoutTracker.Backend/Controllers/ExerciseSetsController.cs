@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
@@ -11,21 +13,28 @@ using WorkoutTracker.Backend.Utilities;
 namespace WorkoutTracker.Backend.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class ExerciseSetsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;    
 
-        public ExerciseSetsController(ApplicationDbContext context)
+        public ExerciseSetsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/ExerciseSets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseSet>>> GetExerciseSets()
         {
+            var user = await GetUserAsync();
+
+
             var exerciseSets = await _context.ExerciseSets
+                .Where(es => es.UserId == user.Id)
                 .Include(es => es.Exercise)
                 .ToListAsync();
 
@@ -34,11 +43,20 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);
         }
 
+        private async Task<IdentityUser?> GetUserAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user;
+        }
+
         // GET: api/ExerciseSets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ExerciseSet>> GetExerciseSet(int id)
         {
+            var user = await GetUserAsync();
+
             var exerciseSet = await _context!.ExerciseSets!
+                .Where(es => es.UserId == user.Id)
                 .Include(es => es.Exercise)
                 .FirstOrDefaultAsync(es => es.ExerciseSetId == id);
 
@@ -57,7 +75,9 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutExerciseSet(int id, CreateExerciseSetRequest request)
         {
+            var user = await GetUserAsync();
             var exerciseSet = await _context.ExerciseSets
+                .Where(es => es.UserId == user.Id)
                 .Include(es => es.Exercise)
                 .FirstOrDefaultAsync(es => es.ExerciseSetId == id);
 
@@ -85,7 +105,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<ExerciseSet>> PostExerciseSet(CreateExerciseSetRequest exerciseSetRequest)
         {
-            
+            var user = await GetUserAsync();
 
             var exercise = await _context.ExerciseDatas
                     .FindAsync(exerciseSetRequest.ExerciseId);
@@ -96,6 +116,7 @@ namespace WorkoutTracker.Backend.Controllers
             {
                 ExerciseSetName = exerciseSetRequest.ExerciseSetName,
                 Repetitions = exerciseSetRequest.Repetitions,
+                UserId = user.Id,
                 Set = exerciseSetRequest.Set,
                 Weight = exerciseSetRequest.Weight,
                 ExerciseId = exerciseSetRequest.ExerciseId,
@@ -118,7 +139,13 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExerciseSet(int id)
         {
-            var exerciseSet = await _context.ExerciseSets.FindAsync(id);
+
+            var user = await GetUserAsync();
+            var exerciseSet = await _context.ExerciseSets
+                .Where(es => es.UserId == user.Id)
+                .FirstOrDefaultAsync(es => es.ExerciseSetId == id);
+
+
             if (exerciseSet == null)
             {
                 return NotFound();
