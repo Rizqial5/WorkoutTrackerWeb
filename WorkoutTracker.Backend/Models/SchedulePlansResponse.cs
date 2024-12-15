@@ -3,6 +3,8 @@
     public class SchedulePlansResponse
     {
         public int Id { get; set; }
+
+        public string User { get; set; }
         public DateTime PlannedDateTime { get; set; }
         public PlanStatus PlanStatus { get; set; }
         public int PlanId { get; set; }

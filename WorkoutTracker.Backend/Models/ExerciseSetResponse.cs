@@ -3,6 +3,7 @@
     public class ExerciseSetResponse
     {
         public int ExerciseSetId { get; set; }
+        public string User { get; set; }
         public string ExerciseSetName { get; set; }
         public int Repetitions { get; set; }
         public int Set { get; set; }
