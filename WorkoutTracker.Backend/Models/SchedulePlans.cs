@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WorkoutTracker.Backend.Models
 {
@@ -14,6 +16,10 @@ namespace WorkoutTracker.Backend.Models
         public int WorkoutPlansId { get; set; }
         //Navigation Property
         public WorkoutPlans WorkoutPlan { get; set; }
+
+        [ForeignKey("UserId")]
+        public string UserId { get; set; }
+        public IdentityUser User { get; set; }
     }
 
     public enum PlanStatus

@@ -49,7 +49,20 @@ using WorkoutTracker.Backend.Models;
                     .HasForeignKey(s => s.ExerciseId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                entity.HasOne(es => es.User)
+                    .WithMany()
+                    .HasForeignKey(es => es.UserId);
 
+
+            });
+
+            modelBuilder.Entity<SchedulePlans>(entity =>
+            {
+                entity.HasKey(sp => sp.Id);
+
+                entity.HasOne(sp => sp.User)
+                    .WithMany()
+                    .HasForeignKey(sp => sp.UserId);
             });
 
 
