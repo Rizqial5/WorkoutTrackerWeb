@@ -9,13 +9,15 @@ using WorkoutTracker.Backend.Models;
 
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
-        public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext (DbContextOptions options)
             : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<WorkoutPlans>(entity =>
             {
                 entity.HasKey(w => w.PlanId);
