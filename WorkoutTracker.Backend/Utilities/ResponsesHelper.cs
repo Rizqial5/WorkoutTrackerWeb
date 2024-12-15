@@ -13,6 +13,7 @@ namespace WorkoutTracker.Backend.Utilities
             {
                 PlanName = workoutPlan.PlanName,
                 PlanId = workoutPlan.PlanId,
+                User = workoutPlan.User.UserName,
                 ExerciseSets = workoutPlan.ExerciseSets.Select(ExerciseSetResponse).ToList(),
             };
 
@@ -37,6 +38,7 @@ namespace WorkoutTracker.Backend.Utilities
             {
                 Id = schedulePlans.Id,
                 PlannedDateTime = schedulePlans.ScheduleTime,
+                User = schedulePlans.User.UserName,
                 PlanStatus = schedulePlans.PlanStatus,
                 PlanId = schedulePlans.WorkoutPlan.PlanId,
                 PlanName = schedulePlans.WorkoutPlan.PlanName
@@ -49,6 +51,7 @@ namespace WorkoutTracker.Backend.Utilities
             var response = new ExerciseSetResponse
             {
                 ExerciseSetId = exerciseSet.ExerciseSetId,
+                User = exerciseSet.User.UserName,
                 ExerciseSetName = exerciseSet.ExerciseSetName,
                 Exercise = ExerciseDataResponse(exerciseSet.Exercise!),
                 Set = exerciseSet.Set,
