@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -18,30 +19,51 @@ namespace WorkoutTracker.Backend.Controllers
     public class WorkoutPlansController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public WorkoutPlansController(ApplicationDbContext context)
+        public WorkoutPlansController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/WorkoutPlans
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
-            var workoutPlans =await WorkoutPlansEnumerable().ToListAsync();
-                
+
+            var workoutPlans = await WorkoutPlansList();
+
 
             var response = workoutPlans.Select(ResponsesHelper.WorkoutPlanResponse);
 
             return Ok(response);   
         }
 
+        private async Task<List<WorkoutPlans>> WorkoutPlansList()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var workoutPlans = await _context.WorkoutPlans
+                .Where(wp => wp.UserId == user.Id)
+                .Include(wp => wp.ScheduledTime)
+                .Include(wp => wp.ExerciseSets)
+                .ThenInclude(s => s.Exercise)
+                .ToListAsync();
+            return workoutPlans;
+        }
+
+        
+
         private IIncludableQueryable<WorkoutPlans, ExerciseData?> WorkoutPlansEnumerable()
         {
+           
+
             var workoutPlans = _context.WorkoutPlans
                 .Include(wp => wp.ScheduledTime)
                 .Include(wp => wp.ExerciseSets)
                 .ThenInclude(s => s.Exercise);
+                
             return workoutPlans;
         }
 

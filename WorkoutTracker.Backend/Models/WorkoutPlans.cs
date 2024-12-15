@@ -19,7 +19,7 @@ namespace WorkoutTracker.Backend.Models
         public ICollection<ExerciseSet> ExerciseSets { get; set; }
 
         [ForeignKey("UserId")]
-        public string UserId { get; set; }
+        public string UserId{ get; set; }
         public IdentityUser User { get; set; }
 
     }

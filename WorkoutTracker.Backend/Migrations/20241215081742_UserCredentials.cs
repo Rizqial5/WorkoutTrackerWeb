@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace WorkoutTracker.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class LoginSystem : Migration
+    public partial class UserCredentials : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +50,21 @@ namespace WorkoutTracker.Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExerciseDatas",
+                columns: table => new
+                {
+                    ExerciseId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryWorkout = table.Column<int>(type: "int", nullable: false),
+                    MuscleGroup = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseDatas", x => x.ExerciseId);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +173,104 @@ namespace WorkoutTracker.Backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WorkoutPlans",
+                columns: table => new
+                {
+                    PlanId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlanName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkoutPlans", x => x.PlanId);
+                    table.ForeignKey(
+                        name: "FK_WorkoutPlans_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExerciseSets",
+                columns: table => new
+                {
+                    ExerciseSetId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExerciseSetName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Set = table.Column<int>(type: "int", nullable: false),
+                    Repetitions = table.Column<int>(type: "int", nullable: false),
+                    Weight = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ExerciseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseSets", x => x.ExerciseSetId);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSets_ExerciseDatas_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "ExerciseDatas",
+                        principalColumn: "ExerciseId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SchedulePlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScheduleTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PlanStatus = table.Column<int>(type: "int", nullable: false),
+                    WorkoutPlansId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SchedulePlans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SchedulePlans_WorkoutPlans_WorkoutPlansId",
+                        column: x => x.WorkoutPlansId,
+                        principalTable: "WorkoutPlans",
+                        principalColumn: "PlanId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExerciseSetWorkoutPlans",
+                columns: table => new
+                {
+                    PlansId = table.Column<int>(type: "int", nullable: false),
+                    WorkoutPlansPlanId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseSetWorkoutPlans", x => new { x.PlansId, x.WorkoutPlansPlanId });
+                    table.ForeignKey(
+                        name: "FK_ExerciseSetWorkoutPlans_ExerciseSets_PlansId",
+                        column: x => x.PlansId,
+                        principalTable: "ExerciseSets",
+                        principalColumn: "ExerciseSetId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSetWorkoutPlans_WorkoutPlans_WorkoutPlansPlanId",
+                        column: x => x.WorkoutPlansPlanId,
+                        principalTable: "WorkoutPlans",
+                        principalColumn: "PlanId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "ExerciseDatas",
+                columns: new[] { "ExerciseId", "CategoryWorkout", "MuscleGroup", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "Bench Press" },
+                    { 2, 1, 3, "Squat" },
+                    { 3, 1, 1, "Dumble Press" },
+                    { 4, 1, 3, "RDL (Romanian Deadlift)" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +309,26 @@ namespace WorkoutTracker.Backend.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSets_ExerciseId",
+                table: "ExerciseSets",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSetWorkoutPlans_WorkoutPlansPlanId",
+                table: "ExerciseSetWorkoutPlans",
+                column: "WorkoutPlansPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SchedulePlans_WorkoutPlansId",
+                table: "SchedulePlans",
+                column: "WorkoutPlansId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutPlans_UserId",
+                table: "WorkoutPlans",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -215,7 +350,22 @@ namespace WorkoutTracker.Backend.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ExerciseSetWorkoutPlans");
+
+            migrationBuilder.DropTable(
+                name: "SchedulePlans");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "ExerciseSets");
+
+            migrationBuilder.DropTable(
+                name: "WorkoutPlans");
+
+            migrationBuilder.DropTable(
+                name: "ExerciseDatas");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

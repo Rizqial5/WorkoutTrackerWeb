@@ -5,7 +5,7 @@
 namespace WorkoutTracker.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMoreExercises : Migration
+    public partial class UserCredentialss : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

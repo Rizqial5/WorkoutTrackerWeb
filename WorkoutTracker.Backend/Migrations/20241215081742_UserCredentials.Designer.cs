@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WorkoutTracker.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241215055809_LoginSystem")]
-    partial class LoginSystem
+    [Migration("20241215081742_UserCredentials")]
+    partial class UserCredentials
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -361,7 +361,12 @@ namespace WorkoutTracker.Backend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("PlanId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("WorkoutPlans");
                 });
@@ -452,6 +457,15 @@ namespace WorkoutTracker.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkoutPlan");
+                });
+
+            modelBuilder.Entity("WorkoutTracker.Backend.Models.WorkoutPlans", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Backend.Models.ExerciseData", b =>

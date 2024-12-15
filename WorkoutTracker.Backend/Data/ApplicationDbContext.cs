@@ -35,7 +35,7 @@ using WorkoutTracker.Backend.Models;
                 entity.HasOne(wp => wp.User)
                     .WithMany()
                     .HasForeignKey(wp => wp.UserId)
-                    .IsRequired();
+                    .IsRequired(false);
             });
 
 
