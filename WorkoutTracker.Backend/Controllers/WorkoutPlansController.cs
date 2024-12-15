@@ -34,51 +34,46 @@ namespace WorkoutTracker.Backend.Controllers
 
             var workoutPlans = await WorkoutPlansList();
 
+            var workoutPlanList = await workoutPlans.ToListAsync();
 
-            var response = workoutPlans.Select(ResponsesHelper.WorkoutPlanResponse);
+
+
+            var response = workoutPlanList.Select(ResponsesHelper.WorkoutPlanResponse);
 
             return Ok(response);   
         }
 
-        private async Task<List<WorkoutPlans>> WorkoutPlansList()
+        private async Task<IIncludableQueryable<WorkoutPlans, ExerciseData?>> WorkoutPlansList()
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var workoutPlans = await _context.WorkoutPlans
-                .Where(wp => wp.UserId == user.Id)
-                .Include(wp => wp.ScheduledTime)
-                .Include(wp => wp.ExerciseSets)
-                .ThenInclude(s => s.Exercise)
-                .ToListAsync();
-            return workoutPlans;
-        }
-
-        
-
-        private IIncludableQueryable<WorkoutPlans, ExerciseData?> WorkoutPlansEnumerable()
-        {
-           
-
             var workoutPlans = _context.WorkoutPlans
-                .Include(wp => wp.ScheduledTime)
-                .Include(wp => wp.ExerciseSets)
+                .Where(wp => wp.UserId == user.Id)
+                .Include(wp => wp.ScheduledTime.Where(sp=>sp.UserId == user.Id))
+                .Include(wp => wp.ExerciseSets.Where(es=>es.UserId == user.Id))
                 .ThenInclude(s => s.Exercise);
                 
             return workoutPlans;
         }
 
+        
+
+       
+
         // GET: api/WorkoutPlans/5
         [HttpGet("{id}")]
         public async Task<ActionResult<WorkoutPlans>> GetWorkoutPlans(int id)
         {
-            var workoutPlans = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
+            var workoutPlans = await WorkoutPlansList();
 
-            if (workoutPlans == null)
+            var workoutPlanList = await workoutPlans.FirstOrDefaultAsync(wp => wp.PlanId == id);
+
+            if (workoutPlanList == null)
             {
                 return NotFound();
             }
 
-            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlans);
+            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlanList);
 
             return Ok(response);
         }
@@ -86,7 +81,11 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet("{id}/report")]
         public async Task<ActionResult<WorkoutPlans>> GetPlanReport(int id)
         {
+
+            var user = await _userManager.GetUserAsync(User);
+
             var workoutPlans = await _context.WorkoutPlans
+                .Where(wp=> wp.UserId == user.Id)
                 .Include(wp => wp.ExerciseSets)
                 .Include(wp => wp.ScheduledTime.Where(sp=> sp.PlanStatus == PlanStatus.Done))
                 .FirstOrDefaultAsync(wp => wp.PlanId == id);
@@ -123,26 +122,30 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlansPostRequest workoutRequest)
         {
-            var workoutPlan = await WorkoutPlansEnumerable().FirstOrDefaultAsync(wp => wp.PlanId == id);
+            var user = await _userManager.GetUserAsync(User);
 
-            if (workoutPlan == null) return NotFound(new { Message = "Workout Plan Not Found" });
+            var workoutPlan = await WorkoutPlansList();
 
-            workoutPlan.PlanName = workoutRequest.PlansName;
+            var workoutPlansList = await workoutPlan.FirstOrDefaultAsync(wp => wp.PlanId == id && wp.UserId == user.Id );
+
+            if (workoutPlansList == null) return NotFound(new { Message = "Workout Plan Not Found" });
+
+            workoutPlansList.PlanName = workoutRequest.PlansName;
 
             var newExercises = _context.ExerciseSets
                 .Where(e => workoutRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseId));
 
             foreach (var exercise in newExercises)
             {
-                if (workoutPlan!.ExerciseSets!.All(e => e.ExerciseSetId != exercise.ExerciseSetId))
+                if (workoutPlansList!.ExerciseSets!.All(e => e.ExerciseSetId != exercise.ExerciseSetId))
                 {
-                    workoutPlan.ExerciseSets.Add(exercise);
+                    workoutPlansList.ExerciseSets.Add(exercise);
                 }
             }
 
             await _context.SaveChangesAsync();
 
-            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlan);
+            var response = ResponsesHelper.WorkoutPlanResponse(workoutPlansList);
 
 
             return Ok(response);
@@ -156,12 +159,21 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans([FromBody] WorkoutPlansPostRequest workoutPlansRequest)
         {
-            var workoutPlans = new WorkoutPlans { PlanName = workoutPlansRequest.PlansName };
+            var user = await _userManager.GetUserAsync(User);
+
+            var workoutPlans = new WorkoutPlans
+            {
+                PlanName = workoutPlansRequest.PlansName,
+                UserId = user.Id
+            };
 
             var exercises = await _context.ExerciseSets
                 .Include(exerciseSet => exerciseSet.Exercise!)
-                .Where(e => workoutPlansRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseSetId))
+                .Where(e => 
+                    workoutPlansRequest.ExercisesSetExercisesCollection.Contains(e.ExerciseSetId) && e.UserId == workoutPlans.UserId)
                 .ToListAsync();
+
+            if (exercises == null) return BadRequest("Exercise Set Not found or User dont have Exercise Set");
 
             workoutPlans.ExerciseSets = exercises;
             //workoutPlans.PlanStatus = PlanStatus.Pending;
@@ -178,7 +190,13 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorkoutPlans(int id)
         {
-            var workoutPlans = await _context.WorkoutPlans.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+
+            var workoutPlans =
+                await _context.WorkoutPlans.FirstOrDefaultAsync(wp => wp.PlanId == id && wp.UserId == user.Id);
+
+            
+
             if (workoutPlans == null)
             {
                 return NotFound();
