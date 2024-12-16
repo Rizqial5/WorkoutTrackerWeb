@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WorkoutTracker.Backend.Services;
+using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Transformers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,8 +33,6 @@ builder.Services.AddOpenApi("v1", opt =>
 {
     opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
-
-
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -72,6 +72,7 @@ builder.Services.AddAuthentication(opt =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 
 var app = builder.Build();
 
