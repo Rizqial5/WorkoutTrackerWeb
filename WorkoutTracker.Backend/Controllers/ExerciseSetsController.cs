@@ -139,7 +139,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExerciseSet(int id)
         {
-
+    
             var user = await GetUserAsync();
             var exerciseSet = await _context.ExerciseSets
                 .Where(es => es.UserId == user.Id)

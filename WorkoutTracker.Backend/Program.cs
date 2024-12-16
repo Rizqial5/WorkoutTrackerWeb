@@ -10,12 +10,22 @@ using WorkoutTracker.Backend.Transformers;
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventLog();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddStackExchangeRedisCache(opt =>
+{
+    opt.Configuration = configuration.GetConnectionString("Redis");
+    opt.InstanceName = "WorkoutTracker:";
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi("v1", opt =>
 {

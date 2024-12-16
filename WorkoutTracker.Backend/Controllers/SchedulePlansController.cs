@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using WorkoutTracker.Backend.Models;
 using WorkoutTracker.Backend.Utilities;
 
@@ -30,6 +32,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSchedulePlans()
         {
+
             var user = await _userManager.GetUserAsync(User);
 
             var schedulePlans = await _context.SchedulePlans
