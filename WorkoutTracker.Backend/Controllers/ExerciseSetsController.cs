@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
@@ -18,20 +19,30 @@ namespace WorkoutTracker.Backend.Controllers
     public class ExerciseSetsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;    
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRedisCacheService _cacheService;
+        private readonly ILogger<ExerciseSetsController> _logger;
 
-        public ExerciseSetsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ExerciseSetsController(
+            ApplicationDbContext context, 
+            UserManager<IdentityUser> userManager, 
+            IRedisCacheService cacheService,
+            ILogger<ExerciseSetsController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _cacheService = cacheService;
+            _logger = logger;
         }
 
         // GET: api/ExerciseSets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseSet>>> GetExerciseSets()
         {
-            var user = await GetUserAsync();
 
+
+
+            var user = await GetUserAsync();
 
             var exerciseSets = await _context.ExerciseSets
                 .Where(es => es.UserId == user.Id)

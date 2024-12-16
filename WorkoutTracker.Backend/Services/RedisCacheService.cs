@@ -29,6 +29,8 @@ namespace WorkoutTracker.Backend.Services
         {
             var serializedData = await _cache.GetStringAsync(key);
 
+            
+
             if (serializedData == null) return default!;
 
             return JsonSerializer.Deserialize<T>(serializedData);
