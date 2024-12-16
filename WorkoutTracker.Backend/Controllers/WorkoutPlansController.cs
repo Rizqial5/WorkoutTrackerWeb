@@ -118,6 +118,14 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult<WorkoutPlans>> GetPlanReport(int id)
         {
 
+            var cacheKeyId = $"WorkoutPlanReport:{id}";
+            var cacheData = await _cacheService.GetCacheAsync<WorkoutPlanReport>(cacheKeyId);
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                return Ok(cacheData);
+            }
+
             var user = await _userManager.GetUserAsync(User);
 
             var workoutPlans = await _context.WorkoutPlans
@@ -130,23 +138,21 @@ namespace WorkoutTracker.Backend.Controllers
             
             int countWorkoutPlanDone = workoutPlans.ScheduledTime.Count();
 
-            var response = new
+            var response = new WorkoutPlanReport
             {
-                workoutPlans.PlanName,
-                ExerciseName = workoutPlans.ExerciseSets.Select(es => new
-                {
-                    es.ExerciseSetName
-
-                }).ToList(),
+                PlanName = workoutPlans.PlanName,
+                ExerciseListName = workoutPlans.ExerciseSets.Select(es => es.ExerciseSetName).ToList(),
                 TotalWorkoutDone = countWorkoutPlanDone,
-                ScheduledPlans = workoutPlans.ScheduledTime.Select(sp => new
+                ListPastSchedule = workoutPlans.ScheduledTime.Select(sp => new ScheduleDone
                 {
-                    sp.ScheduleTime,
-                    sp.PlanStatus
+                    DateSchedule = sp.ScheduleTime,
+                    PlanStatus = sp.PlanStatus
                 }).ToList()
 
 
             };
+
+            await _cacheService.SetCacheAsync(cacheKeyId, response, TimeSpan.FromMinutes(1));
 
             return Ok(response);
 
@@ -184,8 +190,10 @@ namespace WorkoutTracker.Backend.Controllers
             var response = ResponsesHelper.WorkoutPlanResponse(workoutPlansList);
 
             var cacheKeyId = $"WorkoutPlan:{id}";
+            var cacheKeyReport = $"WorkoutPlanReport:{id}";
 
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(cacheKeyId);
+            await _cacheService.DeleteCacheAsync<WorkoutPlanReport>(cacheKeyReport);
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(CacheKeyPlan);
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(CacheKeyAll);
             await _cacheService.SetCacheAsync(cacheKeyId, response, TimeSpan.FromMinutes(2));
@@ -253,9 +261,12 @@ namespace WorkoutTracker.Backend.Controllers
             _context.WorkoutPlans.Remove(workoutPlans);
             await _context.SaveChangesAsync();
 
+
             var cacheKeyId = $"WorkoutPlan:{id}";
+            var cacheKeyReport = $"WorkoutPlanReport:{id}";
 
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(cacheKeyId);
+            await _cacheService.DeleteCacheAsync<WorkoutPlanReport>(cacheKeyReport);
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(CacheKeyPlan);
             await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(CacheKeyAll);
 
