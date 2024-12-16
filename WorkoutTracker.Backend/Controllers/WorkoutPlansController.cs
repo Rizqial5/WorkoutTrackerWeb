@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
@@ -20,17 +21,35 @@ namespace WorkoutTracker.Backend.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRedisCacheService _cacheService;
+        private readonly ILogger<WorkoutPlansController> _logger;
 
-        public WorkoutPlansController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public WorkoutPlansController(
+            ApplicationDbContext context, 
+            UserManager<IdentityUser> userManager,
+            IRedisCacheService cacheService,
+            ILogger<WorkoutPlansController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _cacheService = cacheService;
+            _logger = logger;
         }
 
         // GET: api/WorkoutPlans
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
+            var cacheKey = "WorkoutPlanList";
+            var cacheData = await _cacheService.GetCacheAsync<List<WorkoutPlanResponse>>(cacheKey);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                return Ok(cacheData);
+            }
+
+
 
             var workoutPlans = await WorkoutPlansList();
 
@@ -39,6 +58,9 @@ namespace WorkoutTracker.Backend.Controllers
 
 
             var response = workoutPlanList.Select(ResponsesHelper.WorkoutPlanResponse);
+
+            _logger.LogInformation("Add Data to cache");
+            await _cacheService.SetCacheAsync(cacheKey, response, TimeSpan.FromMinutes(1));
 
             return Ok(response);   
         }
