@@ -42,6 +42,7 @@ namespace WorkoutTracker.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
+
             var user = await _userManager.GetUserAsync(User);
 
             var cacheKeyAll = $"WorkoutPlans:User:{user.Id}";
