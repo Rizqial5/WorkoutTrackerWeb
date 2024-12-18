@@ -10,3 +10,4 @@
         public List<ExerciseSetResponse> ExerciseSets { get; set; }
     }
 }
+    

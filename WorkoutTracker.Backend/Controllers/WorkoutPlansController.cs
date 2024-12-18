@@ -49,7 +49,7 @@ namespace WorkoutTracker.Backend.Controllers
             
             var cacheData = await _cacheService.GetCacheAsync<List<WorkoutPlanResponse>>(cacheKeyAll);
 
-
+            
 
             if (cacheData != null)
             {
