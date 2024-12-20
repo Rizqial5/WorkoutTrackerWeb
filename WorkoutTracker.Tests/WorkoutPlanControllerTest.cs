@@ -118,6 +118,43 @@ public class WorkoutPlanControllerTest
         Assert.Equal(1, response.PlanId);
     }
 
+    [Fact]
+    public async Task GetPlanReport_ById_ReturnWorkoutStatus()
+    {
+        var identityUser = new IdentityUser { Id = "User1", UserName = "TestUser" };
+        var workoutPlans = GenerateWorkoutPlansList(identityUser);
+
+        A.CallTo(() => fakeDbContext.WorkoutPlans).Returns(workoutPlans.AsQueryable().BuildMockDbSet());
+
+        // Fake UserManager
+        var fakeUser = identityUser;
+        A.CallTo(() => _userManager.GetUserAsync(A<ClaimsPrincipal>.Ignored))
+            .Returns(Task.FromResult(fakeUser));
+
+        // Fake CacheService
+        A.CallTo(() => _redisCacheService.GetCacheAsync<WorkoutPlanReport>(A<string>.Ignored))
+            .Returns(Task.FromResult<WorkoutPlanReport>(null)); // Simulating no cache hit
+
+
+
+        var controller = new WorkoutPlansController(fakeDbContext, _userManager, _redisCacheService, _logger);
+
+        //Act
+
+
+        var result = await controller.GetPlanReport(2);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsAssignableFrom<WorkoutPlanReport>(okResult.Value);
+
+        
+
+        var status = response.ListPastSchedule.First();
+
+        _testOutputHelper.WriteLine($"Plan Name :{response.PlanName} PlanStatus : {status.PlanStatus}");
+
+        Assert.Equal(PlanStatus.Done, status.PlanStatus);
+    }
     private static List<WorkoutPlans> GenerateWorkoutPlansList(IdentityUser identityUser)
     {
         var workoutPlans = new List<WorkoutPlans>
@@ -128,7 +165,17 @@ public class WorkoutPlanControllerTest
                 PlanName = "Plan A",
                 UserId = identityUser.Id,
                 User = identityUser,
-                ScheduledTime = new List<SchedulePlans>(),
+                ScheduledTime = new List<SchedulePlans>
+                {
+                    new SchedulePlans
+                    {
+                        Id = 1,
+                        PlanStatus = PlanStatus.Active,
+                        ScheduleTime = DateTime.Now,
+                        User = identityUser,
+                        UserId = identityUser.Id,
+                    }
+                },
                 ExerciseSets = new List<ExerciseSet>()
             },
             new WorkoutPlans
@@ -137,7 +184,17 @@ public class WorkoutPlanControllerTest
                 PlanName = "Plan B",
                 UserId = identityUser.Id,
                 User = identityUser,
-                ScheduledTime = new List<SchedulePlans>(),
+                ScheduledTime = new List<SchedulePlans>
+                {
+                    new SchedulePlans
+                    {
+                        Id = 1,
+                        PlanStatus = PlanStatus.Done,
+                        ScheduleTime = DateTime.Now,
+                        User = identityUser,
+                        UserId = identityUser.Id,
+                    }
+                },
                 ExerciseSets = new List<ExerciseSet>()
             }
         };
