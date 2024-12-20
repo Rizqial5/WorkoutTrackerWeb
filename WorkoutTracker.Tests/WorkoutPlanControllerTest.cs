@@ -147,13 +147,18 @@ public class WorkoutPlanControllerTest
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var response = Assert.IsAssignableFrom<WorkoutPlanReport>(okResult.Value);
 
+        IEnumerable<ScheduleDone> listSchedule = response.ListPastSchedule.AsEnumerable();
+
+        var status = response.ListPastSchedule;
+
+
+        foreach (var item in status)
+        {
+            Assert.Equal(PlanStatus.Done,item.PlanStatus);
+            _testOutputHelper.WriteLine($"Plan Name :{response.PlanName} PlanStatus : {item.PlanStatus}");
+        }
+
         
-
-        var status = response.ListPastSchedule.First();
-
-        _testOutputHelper.WriteLine($"Plan Name :{response.PlanName} PlanStatus : {status.PlanStatus}");
-
-        Assert.Equal(PlanStatus.Done, status.PlanStatus);
     }
     private static List<WorkoutPlans> GenerateWorkoutPlansList(IdentityUser identityUser)
     {
@@ -174,6 +179,8 @@ public class WorkoutPlanControllerTest
                         ScheduleTime = DateTime.Now,
                         User = identityUser,
                         UserId = identityUser.Id,
+                        WorkoutPlan = new WorkoutPlans(),
+                        WorkoutPlansId = 0
                     }
                 },
                 ExerciseSets = new List<ExerciseSet>()
