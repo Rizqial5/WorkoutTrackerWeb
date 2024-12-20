@@ -38,6 +38,7 @@ public class WorkoutPlanControllerTest
         _userManager = A.Fake<UserManager<IdentityUser>>();
         _redisCacheService = A.Fake<IRedisCacheService>();
         _logger = A.Fake<ILogger<WorkoutPlansController>>();
+        _testOutputHelper = testOutputHelper;
     }
 
     [Fact]
@@ -75,9 +76,46 @@ public class WorkoutPlanControllerTest
         // Verifying the response
           // We expect one response due to the single fake WorkoutPlan
         var planResponse = response.First();
+        _testOutputHelper.WriteLine($"Plan Name :{planResponse.PlanName} PlanId : {planResponse.PlanId}");
 
         Assert.Equal("Plan A", planResponse.PlanName);
         Assert.Equal("TestUser", planResponse.User); // Check fake user login
+    }
+
+    [Fact]
+    public async Task GetWorkoutPlans_ByID_ReturnDataById_And_User()
+    {
+        // Arrange
+
+        var identityUser = new IdentityUser { Id = "User1", UserName = "TestUser" };
+        var workoutPlans = GenerateWorkoutPlansList(identityUser);
+
+        A.CallTo(() => fakeDbContext.WorkoutPlans).Returns(workoutPlans.AsQueryable().BuildMockDbSet());
+
+        // Fake UserManager
+        var fakeUser = identityUser;
+        A.CallTo(() => _userManager.GetUserAsync(A<ClaimsPrincipal>.Ignored))
+            .Returns(Task.FromResult(fakeUser));
+
+        // Fake CacheService
+        A.CallTo(() => _redisCacheService.GetCacheAsync<WorkoutPlanResponse>(A<string>.Ignored))
+            .Returns(Task.FromResult<WorkoutPlanResponse>(null)); // Simulating no cache hit
+
+        
+
+        var controller = new WorkoutPlansController(fakeDbContext, _userManager, _redisCacheService, _logger);
+
+        //Act
+        
+
+        var result = await controller.GetWorkoutPlans(1);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsAssignableFrom<WorkoutPlanResponse>(okResult.Value);
+
+        _testOutputHelper.WriteLine($"Plan Name :{response.PlanName} PlanId : {response.PlanId}");
+
+        Assert.Equal(1, response.PlanId);
     }
 
     private static List<WorkoutPlans> GenerateWorkoutPlansList(IdentityUser identityUser)
