@@ -7,60 +7,88 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using MockQueryable;
+using MockQueryable.FakeItEasy;
 using WorkoutTracker.Backend.Controllers;
 using WorkoutTracker.Backend.Models;
 using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Utilities;
 using Xunit;
 using Xunit.Abstractions;
+using Moq;
 
 public class WorkoutPlanControllerTest
 {
     private readonly ITestOutputHelper _testOutputHelper;
+   
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly IRedisCacheService _redisCacheService;
+    private readonly ILogger<WorkoutPlansController> _logger;
 
     public WorkoutPlanControllerTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+        _userManager = A.Fake<UserManager<IdentityUser>>();
+        _redisCacheService = A.Fake<IRedisCacheService>();
+        _logger = A.Fake<ILogger<WorkoutPlansController>>();
     }
 
     [Fact]
     public async Task GetWorkoutPlans_ReturnsDataWithUserLogin()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
+            .UseInMemoryDatabase(databaseName: "TestDatabase").Options;
 
-        using var context = new ApplicationDbContext(options);
+        //var _context = new ApplicationDbContext(options);
 
-        // Membuat instansi WorkoutPlans secara manual tanpa menggunakan FakeItEasy
-        var workoutPlan = new WorkoutPlans
+        // Arrange
+
+
+        var identityUser = new IdentityUser { Id = "User1", UserName = "TestUser" };
+        var workoutPlans = new List<WorkoutPlans>
         {
-            PlanId = 1,
-            PlanName = "Plan A",
-            UserId = "User1",
-            User = new IdentityUser { Id = "User1", UserName = "TestUser" },
-            ExerciseSets = new List<ExerciseSet>(),
-            ScheduledTime = new List<SchedulePlans>()
+            new WorkoutPlans
+            {
+                PlanId = 1,
+                PlanName = "Plan A",
+                UserId = identityUser.Id,
+                User = identityUser,
+                ScheduledTime = new List<SchedulePlans>(),
+                ExerciseSets = new List<ExerciseSet>()
+            },
+            new WorkoutPlans
+            {
+                PlanId = 2,
+                PlanName = "Plan B",
+                UserId = identityUser.Id,
+                User = identityUser,
+                ScheduledTime = new List<SchedulePlans>(),
+                ExerciseSets = new List<ExerciseSet>()
+            }
         };
-        context.WorkoutPlans.Add(workoutPlan);
-        await context.SaveChangesAsync();
+
+
+        
+        var fakeDbContext = A.Fake<ApplicationDbContext>(x =>
+            x.WithArgumentsForConstructor(()=> new ApplicationDbContext(options)));
+
+        
+        A.CallTo(() => fakeDbContext.WorkoutPlans).Returns(workoutPlans.AsQueryable().BuildMockDbSet());
 
         // Fake UserManager
-        var mockUserManager = A.Fake<UserManager<IdentityUser>>();
-        var fakeUser = new IdentityUser { Id = "User1", UserName = "TestUser" };
-        A.CallTo(() => mockUserManager.GetUserAsync(A<ClaimsPrincipal>.Ignored))
+        var fakeUser = identityUser;
+        A.CallTo(() => _userManager.GetUserAsync(A<ClaimsPrincipal>.Ignored))
             .Returns(Task.FromResult(fakeUser));
 
+
+
         // Fake CacheService
-        var mockCacheService = A.Fake<IRedisCacheService>();
-        A.CallTo(() => mockCacheService.GetCacheAsync<List<WorkoutPlanResponse>>(A<string>.Ignored))
+        A.CallTo(() => _redisCacheService.GetCacheAsync<List<WorkoutPlanResponse>>(A<string>.Ignored))
             .Returns(Task.FromResult<List<WorkoutPlanResponse>>(null)); // Simulating no cache hit
 
-        // Fake Logger
-        var mockLogger = A.Fake<ILogger<WorkoutPlansController>>();
+        // Fake query Calling
 
-        var controller = new WorkoutPlansController(context, mockUserManager, mockCacheService, mockLogger);
+        var controller = new WorkoutPlansController(fakeDbContext, _userManager, _redisCacheService, _logger);
 
         // Act
         var result = await controller.GetWorkoutPlans();
@@ -71,7 +99,7 @@ public class WorkoutPlanControllerTest
 
         
         // Verifying the response
-        Assert.Single(response);  // We expect one response due to the single fake WorkoutPlan
+          // We expect one response due to the single fake WorkoutPlan
         var planResponse = response.First();
         var planResponseList = response.ToList();
 
