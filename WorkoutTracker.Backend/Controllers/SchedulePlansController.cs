@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
@@ -21,11 +22,19 @@ namespace WorkoutTracker.Backend.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRedisCacheService _cacheService;
+        private readonly ILogger<SchedulePlansController> _logger;
 
-        public SchedulePlansController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public SchedulePlansController(
+            ApplicationDbContext context, 
+            UserManager<IdentityUser> userManager,
+            ILogger<SchedulePlansController> logger,
+            IRedisCacheService cacheService)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
+            _cacheService = cacheService;
         }
 
         // GET: api/SchedulePlans
@@ -35,14 +44,27 @@ namespace WorkoutTracker.Backend.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
+            //Caching
+            var cacheSchedulePlansAll = $"SchedulePlans:User:{user.Id}";
+            var cacheData = await _cacheService.GetCacheAsync<List<SchedulePlansResponse>>(cacheSchedulePlansAll);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                _logger.LogInformation($"User cache for {cacheSchedulePlansAll}");
+
+                return Ok(cacheData);
+            }
+            //---------------------------
+
             var schedulePlans = await _context.SchedulePlans
                 .Where(sp=> sp.UserId == user.Id)
                 .Include(sp => sp.WorkoutPlan)
                 .ToListAsync();
 
             var response = schedulePlans.Select(ResponsesHelper.SchedulePlansResponse);
-            
-            
+
+            await _cacheService.SetCacheAsync(cacheSchedulePlansAll, response, TimeSpan.FromMinutes(5));
 
             return Ok(response);
         }
@@ -52,6 +74,19 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult<SchedulePlans>> GetSchedulePlans(int id)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            //Caching
+            var cacheKeySchedulePlan = $"SchedulePlan:User:{user.Id}";
+            var cacheData = await _cacheService.GetCacheAsync<SchedulePlansResponse>(cacheKeySchedulePlan);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                _logger.LogInformation($"User cache for {cacheKeySchedulePlan}");
+
+                return Ok(cacheData);
+            }
+            //---------------------------
 
             var schedulePlans = await _context.SchedulePlans
                 .Where(sp=> sp.UserId == user.Id)
@@ -65,6 +100,8 @@ namespace WorkoutTracker.Backend.Controllers
 
             var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
 
+            await _cacheService.SetCacheAsync(cacheKeySchedulePlan, response, TimeSpan.FromMinutes(5));
+
             return Ok(response);
         }
 
@@ -73,6 +110,20 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
+            //Caching
+            var cacheKeySchedulePlanSorted = $"SchedulePlansSorted:User:{user.Id}";
+            var cacheData = await _cacheService.GetCacheAsync<List<SchedulePlansResponse>>(cacheKeySchedulePlanSorted);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                _logger.LogInformation($"User cache for {cacheKeySchedulePlanSorted}");
+
+                return Ok(cacheData);
+            }
+            //---------------------------
+
+
             var schedulePlans = await _context.SchedulePlans
                 .Where(sp => sp.UserId == user.Id)
                 .Include(sp => sp.WorkoutPlan)
@@ -80,6 +131,8 @@ namespace WorkoutTracker.Backend.Controllers
                 .ToListAsync();
 
             var response = schedulePlans.Select(ResponsesHelper.SchedulePlansResponse);
+
+            await _cacheService.SetCacheAsync(cacheKeySchedulePlanSorted, response, TimeSpan.FromMinutes(5));
 
             return Ok(response);
 
@@ -108,6 +161,8 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
+            await ClearAllCacheAsync(user);
+
             var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
 
 
@@ -131,6 +186,18 @@ namespace WorkoutTracker.Backend.Controllers
             schedulePlan.PlanStatus = PlanStatus.Done;
 
             await _context.SaveChangesAsync();
+
+            var CacheKeyAll = $"WorkoutPlans:User:{user.Id}";
+            var CacheKeyPlan = $"WorkoutPlan:User:{user.Id}";
+            var cacheKeyReport = $"WorkoutPlanReport:User:{user.Id}";
+
+            await ClearAllCacheAsync(user);
+
+            _logger.LogInformation("Clear All Cache");
+
+            await _cacheService.DeleteCacheAsync<WorkoutPlanResponse>(CacheKeyPlan);
+            await _cacheService.DeleteCacheAsync<WorkoutPlanReport>(cacheKeyReport);
+            await _cacheService.DeleteCacheAsync<List<WorkoutPlanResponse>>(CacheKeyAll);
 
             var response = $"{schedulePlan.WorkoutPlan.PlanName} set to {schedulePlan.PlanStatus}";
 
@@ -162,6 +229,7 @@ namespace WorkoutTracker.Backend.Controllers
             _context.SchedulePlans.Add(schedulePlans);
 
             await _context.SaveChangesAsync();
+            await ClearAllCacheAsync(user);
 
             var response = ResponsesHelper.SchedulePlansResponse(schedulePlans);
 
@@ -188,7 +256,22 @@ namespace WorkoutTracker.Backend.Controllers
             _context.SchedulePlans.Remove(schedulePlans);
             await _context.SaveChangesAsync();
 
+            await ClearAllCacheAsync(user);
+
             return Ok("Data deleted successfully");
+        }
+
+        private async Task ClearAllCacheAsync(IdentityUser user)
+        {
+            var cacheSchedulePlansAll = $"SchedulePlans:User:{user.Id}";
+            var cacheKeySchedulePlan = $"SchedulePlan:User:{user.Id}";
+            var cacheKeySchedulePlanSorted = $"SchedulePlansSorted:User:{user.Id}";
+
+            _logger.LogInformation("Clear All Cache");
+
+            await _cacheService.DeleteCacheAsync<SchedulePlansResponse>(cacheKeySchedulePlan);
+            await _cacheService.DeleteCacheAsync<List<SchedulePlansResponse>>(cacheSchedulePlansAll);
+            await _cacheService.DeleteCacheAsync<List<SchedulePlansResponse>>(cacheKeySchedulePlanSorted);
         }
 
     }
