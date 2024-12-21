@@ -40,16 +40,31 @@ namespace WorkoutTracker.Backend.Controllers
         public async Task<ActionResult<IEnumerable<ExerciseSet>>> GetExerciseSets()
         {
 
-
-
             var user = await GetUserAsync();
+            
+            //Caching
+            var cacheKeyExerciseAll = $"ExerciseSets:User:{user.Id}";
+            var cacheData = await _cacheService.GetCacheAsync<List<ExerciseSetResponse>>(cacheKeyExerciseAll);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                _logger.LogInformation($"User cache for {cacheKeyExerciseAll}");
+
+                return Ok(cacheData);
+            }
+            //---------------------------
 
             var exerciseSets = await _context.ExerciseSets
                 .Where(es => es.UserId == user.Id)
                 .Include(es => es.Exercise)
                 .ToListAsync();
 
+            
+
             var response = exerciseSets.Select(ResponsesHelper.ExerciseSetResponse);
+
+            await _cacheService.SetCacheAsync(cacheKeyExerciseAll, response, TimeSpan.FromMinutes(1));
 
             return Ok(response);
         }
@@ -66,6 +81,19 @@ namespace WorkoutTracker.Backend.Controllers
         {
             var user = await GetUserAsync();
 
+            //Caching
+            var cacheKeyExercise = $"ExerciseSet:User:{user.Id}";
+            var cacheData = await _cacheService.GetCacheAsync<ExerciseSetResponse>(cacheKeyExercise);
+
+            if (cacheData != null)
+            {
+                _logger.LogInformation("Retrieve Data from Cache");
+                _logger.LogInformation($"User cache for {cacheKeyExercise}");
+
+                return Ok(cacheData);
+            }
+            //---------------------------
+
             var exerciseSet = await _context!.ExerciseSets!
                 .Where(es => es.UserId == user.Id)
                 .Include(es => es.Exercise)
@@ -77,6 +105,8 @@ namespace WorkoutTracker.Backend.Controllers
             }
 
             var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
+
+            await _cacheService.SetCacheAsync(cacheKeyExercise, response, TimeSpan.FromMinutes(1));
 
             return Ok(response);
         }
@@ -106,7 +136,13 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
+            var cacheKeyExercise = $"ExerciseSet:User:{user.Id}";
+
+            await ClearAllCache(user);
+
             var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
+            
+            await _cacheService.SetCacheAsync(cacheKeyExercise, response, TimeSpan.FromMinutes(1));
 
             return Ok(response);
         }
@@ -139,6 +175,8 @@ namespace WorkoutTracker.Backend.Controllers
 
             await _context.SaveChangesAsync();
 
+            await ClearAllCache(user);
+
             var response = ResponsesHelper.ExerciseSetResponse(exerciseSet);
 
             return CreatedAtAction("GetExerciseSet", new { id = exerciseSet.ExerciseSetId }, response);
@@ -165,9 +203,22 @@ namespace WorkoutTracker.Backend.Controllers
             _context.ExerciseSets.Remove(exerciseSet);
             await _context.SaveChangesAsync();
 
+            await ClearAllCache(user);
+
             return Ok("Data deleted successfully");
         }
 
-        
+        private async Task ClearAllCache(IdentityUser user)
+        {
+            var cacheKeyExerciseAll = $"ExerciseSets:User:{user.Id}";
+            var cacheKeyExercise = $"ExerciseSet:User:{user.Id}";
+
+            _logger.LogInformation("Clear All Cache");
+
+            await _cacheService.DeleteCacheAsync<ExerciseSetResponse>(cacheKeyExercise);
+            await _cacheService.DeleteCacheAsync<List<ExerciseSetResponse>>(cacheKeyExerciseAll);
+        }
+
+
     }
 }
