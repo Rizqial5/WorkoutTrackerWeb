@@ -1,18 +1,18 @@
 import { useState } from 'react'
-import { login } from '@/services/authService'
+import { login } from '../services/authService.js'
 import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault;
+        e.preventDefault();
         setError('');
         try {
-            await login(email, password);
+            await login(username, password);
             navigate('/dashboard');
         } catch (err) {
             setError(err || 'Failed to Login');
@@ -20,14 +20,14 @@ const Login = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto' }}>
+        <div style={{ maxWidth: '400px'}}>
             <h2>Login</h2>
-            <form onSubmit={handleLogin()}>
+            <form onSubmit={handleLogin}>
                 <input
-                    type="email"
-                    placeholder="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required/>
                 <input
                     type="password"
