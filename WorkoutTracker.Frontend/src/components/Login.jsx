@@ -13,7 +13,7 @@ const Login = () => {
         setError('');
         try {
             await login(email, password);
-            navigate('/main');
+            navigate('/dashboard');
         } catch (err) {
             setError(err || 'Failed to Login');
         }
