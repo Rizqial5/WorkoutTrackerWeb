@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Login from './components/Login.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import WorkoutPlans from './components/WorkoutPlans.jsx'
+import './App.css'
 
 
 const Dashboard = () => <h1>Welcome to Dashboard</h1>;
