@@ -9,7 +9,7 @@ const Dashboard = () => <h1>Welcome to Dashboard</h1>;
 function App() {
     return (
         <Routes>
-            <Route path="/login" element={<Login />}/>
+            <Route path="/login" element={<Login  />}/>
             <Route
                 path="/dashboard"
                 element={
