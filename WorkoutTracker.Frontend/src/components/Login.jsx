@@ -15,25 +15,9 @@ import {
     CssBaseline
   } from '@mui/material';
   import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+  import theme from '../theme/them.js';
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#2196f3'
-        },
-        secondary: {
-            main: '#000000'
-        },
-        background: {
-            default: '#f0f8ff',
-            paper: '#ffffff'
-        },
-        text: {
-            primary: '#000000',
-            secondary: '#424242',
-        }
-    }
-})
+
 
 const Login = () => {
     const [username, setUsername] = useState('');
