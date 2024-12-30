@@ -84,7 +84,7 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/ExerciseDatas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExerciseData>> PostExerciseData(ExerciseData exerciseData)
+        public async Task<ActionResult<ExerciseDataResponse>> PostExerciseData(ExerciseData exerciseData)
         {
             _context.ExerciseDatas.Add(exerciseData);
             await _context.SaveChangesAsync();
