@@ -24,7 +24,6 @@ function App() {
                         <Dashboard/>
                         <WorkoutPlans/>
                         </ThemeProvider>
-                    
                     </ProtectedRoute>
                 }/>
         </Routes>

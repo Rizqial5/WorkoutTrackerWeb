@@ -2,9 +2,10 @@ import axios from 'axios'
 
 const API_URL = '/api/workoutplans';
 
-const token = localStorage.getItem('token');
+
 
 export const getWorkoutPlans = async () => {
+    const token = localStorage.getItem('token');
     try {
         const response = await axios.get(`${API_URL}`,
             {

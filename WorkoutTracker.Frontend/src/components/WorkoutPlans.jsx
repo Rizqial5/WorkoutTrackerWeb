@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 
 function WorkoutPlans() {
     const [workoutPlansData, setWorkoutPlansData] = useState([])
-    const [loading, setLoading] =   useState(true)
+    const [loading, setLoading] =  useState(true)
     const [error, setError] = useState('')
 
     useEffect(() => {

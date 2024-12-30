@@ -18,6 +18,8 @@ import {
   Settings,
   Home,
 } from '@mui/icons-material';
+import { logout } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -32,6 +34,13 @@ const menuItems = [
 
 export default function Sidebar() {
   const themeSide = useTheme();
+  const navigate = useNavigate();
+  const handleLogout =()=> {
+    logout()
+    console.log("logout complete")
+    console.log(localStorage.getItem('token'))
+    navigate('/login')
+  }
 
   return (
     <Drawer
@@ -65,7 +74,7 @@ export default function Sidebar() {
             </ListItem>
         ))}
         </List>
-        <Button variant='contained' sx={{
+        <Button onClick={handleLogout} variant='contained' sx={{
             marginTop: 45,
             marginLeft: 9,
             width: 100,
