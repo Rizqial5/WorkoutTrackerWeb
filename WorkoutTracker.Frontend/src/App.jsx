@@ -7,74 +7,20 @@ import Sidebar from './components/Sidebar.jsx'
 import './App.css'
 import theme from './theme/them.js'
 import { ThemeProvider } from '@emotion/react'
-import { AppBar, Box, CssBaseline, IconButton, Toolbar, Typography } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu';
+import { CssBaseline, Box} from '@mui/material'
+import Dashboard from './components/Dashboard.jsx'
+import TopBar from './components/TopBar.jsx'
 
 
-function Dashboard(){
+
+function App() {
+
     const [open, setOpen] = useState(false)
     const toggleDrawer = () =>{
         setOpen(!open);
     }
 
 
-    return(
-        <Box sx={{display: 'flex'}}>
-            <AppBar
-                position='fixed'
-                sx={{
-                    width: open ? `calc(100% - ${240}px)` : '100%',
-                    ml: open ? `${240}px` : 0,
-                    transition: theme.transitions.create(['margin', 'width'], {
-                        easing: theme.transitions.easing.sharp,
-                        duration: theme.transitions.duration.leavingScreen
-                    }),
-                }}
-            >   
-                <Toolbar>
-                    <IconButton
-                        color='inherit'
-                        aria-label='open drawer'
-                        onClick={toggleDrawer}
-                        edge='start'
-                        sx={{ mr: 2, ...(open && { display: 'none' }) }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant='h6' noWrap component='div'>
-                        Workout Planner
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Sidebar openBar={open} toggleDrawer={toggleDrawer}/>
-            <Box
-                component='main'
-                sx={{
-                    flexGrow: 1,
-                    p: 3,
-                    backgroundColor: 'background.default',
-                    transition: theme.transitions.create('margin', {
-                        easing: theme.transitions.easing.sharp,
-                        duration: theme.transitions.duration.leavingScreen,
-                    }),
-                    marginLeft: `-${240}px`,
-                        ...(open && {
-                        transition: theme.transitions.create('margin', {
-                            easing: theme.transitions.easing.easeOut,
-                            duration: theme.transitions.duration.enteringScreen,
-                        }),
-                        marginLeft: 0,
-                    }),
-                }}
-            >
-                <Toolbar/>
-                <WorkoutPlans/>
-            </Box>
-        </Box>
-    )
-} 
-    
-function App() {
     return (
         <Router>
         <Routes>
@@ -85,7 +31,11 @@ function App() {
                     <ProtectedRoute>
                         <ThemeProvider theme={theme}>
                         <CssBaseline/>
-                            <Dashboard/>
+                        <Box sx={{display: 'flex'}}>
+                            <TopBar open={open} toggleDrawer={toggleDrawer}/>
+                            <Sidebar openBar={open} toggleDrawer={toggleDrawer} />
+                            <Dashboard open={open}/>
+                        </Box>
                         </ThemeProvider>
                     </ProtectedRoute>
                 }/>
