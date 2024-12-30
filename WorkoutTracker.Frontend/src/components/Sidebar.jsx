@@ -9,7 +9,8 @@ import {
   Toolbar,
   Typography,
   useTheme,
-  Button
+  Button,
+  IconButton
 } from '@mui/material';
 import {
   FitnessCenter,
@@ -17,6 +18,7 @@ import {
   Timeline,
   Settings,
   Home,
+  ChevronLeft,
 } from '@mui/icons-material';
 import { logout } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
@@ -25,14 +27,14 @@ import { useNavigate } from 'react-router-dom';
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Dashboard', icon: Home, path: '/' },
+  { text: 'Dashboard', icon: Home, path: '/dashboard' },
   { text: 'Workouts', icon: FitnessCenter, path: '/workouts' },
   { text: 'Schedule', icon: CalendarToday, path: '/schedule' },
   { text: 'Progress', icon: Timeline, path: '/progress' },
   { text: 'Settings', icon: Settings, path: '/settings' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({openBar, toggleDrawer}) {
   const themeSide = useTheme();
   const navigate = useNavigate();
   const handleLogout =()=> {
@@ -54,13 +56,17 @@ export default function Sidebar() {
           color: themeSide.palette.primary.main,
         },
       }}
-      variant="permanent"
+      variant="persistent"
       anchor="left"
+      open= {openBar}
     >
-        <Toolbar>
-        <Typography variant="h6" noWrap component="div" color="primary">
-            Workout Planner
-        </Typography>
+        <Toolbar sx ={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px:[1]}}>
+          <Typography variant="h6" noWrap component="div" color="primary" sx={{flexGrow: 1}}>
+              Workout Planner
+          </Typography>
+          <IconButton onClick={toggleDrawer}>
+            <ChevronLeft/>
+          </IconButton>
         </Toolbar>
         <List>
         {menuItems.map((item) => (
