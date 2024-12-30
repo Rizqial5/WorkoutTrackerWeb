@@ -10,6 +10,18 @@ import { ThemeProvider } from '@emotion/react'
 import { CssBaseline, Box} from '@mui/material'
 import Dashboard from './components/Dashboard.jsx'
 import TopBar from './components/TopBar.jsx'
+import styled from "styled-components";
+
+
+
+const Page = styled.div`
+  width: 100vw;
+  height: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+`;
 
 
 
@@ -22,6 +34,7 @@ function App() {
 
 
     return (
+        <Page>
         <Router>
         <Routes>
             <Route path="/login" element={<Login  />}/>
@@ -41,6 +54,7 @@ function App() {
                 }/>
         </Routes>
         </Router>
+        </Page>
     );
 
 }

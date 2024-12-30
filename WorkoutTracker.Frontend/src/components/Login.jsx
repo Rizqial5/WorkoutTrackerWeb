@@ -13,8 +13,9 @@ import {
     ThemeProvider,
     CssBaseline
   } from '@mui/material';
-  import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-  import theme from '../theme/them.js';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import theme from '../theme/them.js';
+
 
 
 

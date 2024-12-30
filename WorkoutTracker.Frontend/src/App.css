@@ -1,9 +1,16 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 35%;
-  padding: 2rem;
-  text-align: center;
-} */
+body,
+html {
+  width: 100%;
+  margin: 0;
+  background-color: #222;
+  color: #fff;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
 
 
 
