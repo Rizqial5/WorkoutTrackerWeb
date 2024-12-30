@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Backend.Models;
+using WorkoutTracker.Backend.Utilities;
 
 namespace WorkoutTracker.Backend.Controllers
 {
@@ -22,14 +23,20 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/ExerciseDatas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExerciseData>>> GetExerciseDatas()
+        public async Task<ActionResult<IEnumerable<ExerciseDataResponse>>> GetExerciseDatas()
         {
-            return await _context.ExerciseDatas.ToListAsync();
+            var exerciseDatas = await _context.ExerciseDatas.ToListAsync();
+
+            var responses = exerciseDatas.Select(ResponsesHelper.ExerciseDataResponse);
+
+            return Ok(responses);
+
+
         }
 
         // GET: api/ExerciseDatas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExerciseData>> GetExerciseData(int id)
+        public async Task<ActionResult<ExerciseDataResponse>> GetExerciseData(int id)
         {
             var exerciseData = await _context.ExerciseDatas.FindAsync(id);
 
@@ -38,7 +45,9 @@ namespace WorkoutTracker.Backend.Controllers
                 return NotFound();
             }
 
-            return exerciseData;
+            var response = ResponsesHelper.ExerciseDataResponse(exerciseData);
+
+            return Ok(response);
         }
 
         // PUT: api/ExerciseDatas/5
@@ -80,7 +89,9 @@ namespace WorkoutTracker.Backend.Controllers
             _context.ExerciseDatas.Add(exerciseData);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetExerciseData", new { id = exerciseData.ExerciseId }, exerciseData);
+            var response = ResponsesHelper.ExerciseDataResponse(exerciseData);
+
+            return CreatedAtAction("GetExerciseData", new { id = exerciseData.ExerciseId }, response);
         }
 
         // DELETE: api/ExerciseDatas/5
