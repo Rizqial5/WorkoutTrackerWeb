@@ -9,6 +9,7 @@ import './App.css'
 const Dashboard = () => <h1>Welcome to Dashboard</h1>;
 function App() {
     return (
+        <Router>
         <Routes>
             <Route path="/login" element={<Login  />}/>
             <Route
@@ -19,8 +20,8 @@ function App() {
                         <WorkoutPlans/>
                     </ProtectedRoute>
                 }/>
-
         </Routes>
+        </Router>
     );
 
 }
