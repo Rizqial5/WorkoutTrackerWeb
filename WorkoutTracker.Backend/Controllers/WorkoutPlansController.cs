@@ -123,7 +123,7 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpGet("{id}/report")]
-        public async Task<ActionResult<WorkoutPlans>> GetPlanReport(int id)
+        public async Task<ActionResult<WorkoutPlanReport>> GetPlanReport(int id)
         {
 
             var cacheKeyId = $"WorkoutPlanReport:{id}";
@@ -214,7 +214,7 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<WorkoutPlans>> PostWorkoutPlans([FromBody] WorkoutPlansPostRequest workoutPlansRequest)
+        public async Task<ActionResult<WorkoutPlanResponse>> PostWorkoutPlans([FromBody] WorkoutPlansPostRequest workoutPlansRequest)
         {
 
             var user = await _userManager.GetUserAsync(User);
