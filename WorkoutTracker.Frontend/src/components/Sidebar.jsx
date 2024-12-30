@@ -19,6 +19,7 @@ import {
   Settings,
   Home,
   ChevronLeft,
+  EventNote,
 } from '@mui/icons-material';
 import { logout } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +29,8 @@ const drawerWidth = 240;
 
 const menuItems = [
   { text: 'Dashboard', icon: Home, path: '/dashboard' },
-  { text: 'Workouts', icon: FitnessCenter, path: '/workouts' },
+  { text: 'Workout Plan', icon: EventNote, path: '/plan' },
+  { text: 'Exercise Set', icon: FitnessCenter, path: '/exercise' },
   { text: 'Schedule', icon: CalendarToday, path: '/schedule' },
   { text: 'Progress', icon: Timeline, path: '/progress' },
   { text: 'Settings', icon: Settings, path: '/settings' },
@@ -81,7 +83,7 @@ export default function Sidebar({openBar, toggleDrawer}) {
         ))}
         </List>
         <Button onClick={handleLogout} variant='contained' sx={{
-            marginTop: 45,
+            marginTop: 40,
             marginLeft: 9,
             width: 100,
             backgroundColor: '#ed3e32'
