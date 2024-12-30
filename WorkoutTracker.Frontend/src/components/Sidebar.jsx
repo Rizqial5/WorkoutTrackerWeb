@@ -9,6 +9,7 @@ import {
   Toolbar,
   Typography,
   useTheme,
+  Button
 } from '@mui/material';
 import {
   FitnessCenter,
@@ -47,23 +48,29 @@ export default function Sidebar() {
       variant="permanent"
       anchor="left"
     >
-      <Toolbar>
+        <Toolbar>
         <Typography variant="h6" noWrap component="div" color="primary">
-          Workout Planner
+            Workout Planner
         </Typography>
-      </Toolbar>
-      <List>
+        </Toolbar>
+        <List>
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
+            <ListItem key={item.text} disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+                <ListItemIcon>
                 <item.icon />
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
+                </ListItemIcon>
+                <ListItemText primary={item.text} />
             </ListItemButton>
-          </ListItem>
+            </ListItem>
         ))}
-      </List>
+        </List>
+        <Button variant='contained' sx={{
+            marginTop: 45,
+            marginLeft: 9,
+            width: 100,
+            backgroundColor: '#ed3e32'
+            }}>Logout</Button>
     </Drawer>
   );
 }
