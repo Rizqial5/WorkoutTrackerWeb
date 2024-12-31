@@ -1,0 +1,74 @@
+FORMAT: A1
+
+# Workout Tracker API
+
+This is an API blueprint example describing a Workout Tracker API
+
+# Group Authentication
+
+Resources related to Workout Tracker in the API.
+
+## Login [/api/Auth/Login]
+
+### Login [POST]
+
+Login method user.
+
++ Request (application/json)
+
+    + Attributes (Login Request)
+
++ Response 200 (application/json)
+
+    + Attributes (Login Response)
+
+## Register [/api/Auth/Register]
+
+### Register [POST]
+
+Register new account
+
++ Request (application/json)
+
+    + Attributes (Register Request)
+
++ Response 200 (application/json)
+
+# Group Exercise Data
+
+Exercise Data controller add Exercise 
+
+## Get Exercise [/api/ExerciseDatas]
+
+### Get Exercise [GET]
+
+Get All Exercise Data 
+
++ Response 200 (application/json)
+
+    + Attributes (Exercise Data Response)
+
+
+
+
+## Data Structure
+
+### Exercise Data Response
++ id: 1 (number)
++ name: Bench Press (string)
++ categoryWorkout: Strength, Cardio (enum)
++ muscleGroup: Back, Chest, Arm, Leg (enum)
+
+### Register Request
++ email: email@email.com (string, nullable)
++ username: username (string, nullable)
++ password: password (string, nullable)
+
+
+### Login Request
++ username: username (string, nullable)
++ password: password (string, nullable)
+
+
+### Login Response
++ token: JWT_TOKEN_RESPONSE (string)
