@@ -38,17 +38,38 @@ Register new account
 
 Exercise Data controller add Exercise 
 
-## Get Exercise [/api/ExerciseDatas]
+## Exercise Get and Post [/api/ExerciseDatas]
 
-### Get Exercise [GET]
+### Get All Exercise [GET]
 
 Get All Exercise Data 
 
 + Response 200 (application/json)
 
+    + Attributes (array[Exercise Data Response])
+
+
+### Add Exercise Data [POST]
+
++ Request (application/json)
+
+    + Attributes (Exercise Data Response)
+
++ Response 200 (application/json)
+    
     + Attributes (Exercise Data Response)
 
 
+## Exercise by ID [/api/ExerciseDatas/{id}]
+
+### Get Exercise by Id [GET]
+
++ Parameters
+    + id (number) - Integer32 type exercise ID search
+
++ Response 200 (application/json)
+
+    + Attributes (Exercise Data Response)
 
 
 ## Data Structure
