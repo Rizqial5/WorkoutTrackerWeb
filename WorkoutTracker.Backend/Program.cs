@@ -32,6 +32,23 @@ builder.Services.AddStackExchangeRedisCache(opt =>
 builder.Services.AddOpenApi("v1", opt =>
 {
     opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+
+    opt.AddDocumentTransformer((document, context, cancellationToken) => {
+
+        document.Info = new()
+        {
+            Title = "Workout Tracker API",
+            Version = "1.0.0",
+            Description = "This api contains all endpoints for Wokrkout Tracker"
+        };
+        document.Info.Contact = new()
+        {
+            Email = "bagusriski1@gmail.com",
+            Name = "Bagus Rizqi"
+        };
+
+        return Task.CompletedTask;
+    });
     
 });
 
@@ -97,7 +114,7 @@ if (app.Environment.IsDevelopment())
         
         options.Theme = ScalarTheme.Solarized;
         options.DarkMode = true;
-    
+
         options.Title = "Workout Tracker API";
 
         

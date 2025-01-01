@@ -27,6 +27,8 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpPost("Login")]
+        [EndpointDescription("User Login")]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Login([FromBody] LoginRequest login)
         {
             // Cari user berdasarkan username (atau email, jika menggunakan email untuk login)
@@ -49,6 +51,7 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpPost("Register")]
+        [EndpointDescription("Register new account for user")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest register)
         {
             if (ModelState.IsValid)
