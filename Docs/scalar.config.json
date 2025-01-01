@@ -1,0 +1,15 @@
+{
+    "subdomain": "WorkoutTracker",
+    "guides": [
+      {
+        "name": "Workout Tracker API",
+        "sidebar": [
+          {
+            "path": "Readme.md",
+            "type": "page"
+          }
+        ]
+      }
+    ],
+    "references": []
+  }

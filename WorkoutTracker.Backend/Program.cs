@@ -32,6 +32,7 @@ builder.Services.AddStackExchangeRedisCache(opt =>
 builder.Services.AddOpenApi("v1", opt =>
 {
     opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -93,10 +94,11 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference(options =>
     {
+        
         options.Theme = ScalarTheme.Solarized;
         options.DarkMode = true;
-
-        
+    
+        options.Title = "Workout Tracker API";
 
         
 
