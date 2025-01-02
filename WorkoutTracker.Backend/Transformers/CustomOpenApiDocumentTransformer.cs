@@ -8,14 +8,14 @@ public class CustomOpenApiDocumentTransformer : IOpenApiDocumentTransformer
         
 
         // Tambahkan tag menggunakan fungsi helper
-        ModifiedDescription(document, "Auth", "Endpoint terkait produk di aplikasi ini.");
-        ModifiedDescription(document, "ExerciseSets", "Endpoint terkait pengguna di aplikasi ini.");
-        ModifiedDescription(document, "WorkoutPlans", "Endpoint terkait pesanan di aplikasi ini.");
+        AddTagDescription(document, "Auth", "Endpoint terkait produk di aplikasi ini.");
+        AddTagDescription(document, "ExerciseSets", "Endpoint terkait pengguna di aplikasi ini.");
+        AddTagDescription(document, "WorkoutPlans", "Endpoint terkait pesanan di aplikasi ini.");
 
         return Task.CompletedTask;
     }
 
-    private void ModifiedDescription(OpenApiDocument document, string nameTag, string description)
+    private void AddTagDescription(OpenApiDocument document, string nameTag, string description)
     {
        
         foreach (var item in document.Tags)
