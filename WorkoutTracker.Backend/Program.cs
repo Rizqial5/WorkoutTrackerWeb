@@ -23,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 builder.Services.AddStackExchangeRedisCache(opt =>
 {
     opt.Configuration = configuration.GetConnectionString("Redis");
