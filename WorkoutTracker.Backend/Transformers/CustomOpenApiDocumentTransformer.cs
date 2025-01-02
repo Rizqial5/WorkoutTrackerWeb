@@ -5,7 +5,6 @@ public class CustomOpenApiDocumentTransformer : IOpenApiDocumentTransformer
 {
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
-        
 
         // Tambahkan tag menggunakan fungsi helper
         AddTagDescription(document, "Auth", "Endpoint terkait produk di aplikasi ini.");
