@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WorkoutTracker.Backend.Models
 {
@@ -15,6 +16,7 @@ namespace WorkoutTracker.Backend.Models
 
         public int WorkoutPlansId { get; set; }
         //Navigation Property
+        [JsonIgnore]
         public WorkoutPlans WorkoutPlan { get; set; }
 
         [ForeignKey("UserId")]

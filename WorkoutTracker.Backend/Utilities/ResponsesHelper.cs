@@ -1,11 +1,12 @@
-﻿using WorkoutTracker.Backend.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WorkoutTracker.Backend.Models;
 
 namespace WorkoutTracker.Backend.Utilities
 {
     public class ResponsesHelper
     {
 
-        public static WorkoutPlanResponse WorkoutPlanResponse(WorkoutPlans workoutPlan)
+        public static WorkoutPlanResponse WorkoutPlanResponse([FromBody]WorkoutPlans workoutPlan)
         {
             
 
@@ -30,7 +31,7 @@ namespace WorkoutTracker.Backend.Utilities
             return response;
         }
 
-        public static SchedulePlansResponse SchedulePlansResponse(SchedulePlans schedulePlans)
+        public static SchedulePlansResponse SchedulePlansResponse([FromBody] SchedulePlans schedulePlans)
         {
             if (schedulePlans == null) return null;
 

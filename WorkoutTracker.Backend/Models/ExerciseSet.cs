@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutTracker.Backend.Models
@@ -25,9 +26,12 @@ namespace WorkoutTracker.Backend.Models
 
         [ForeignKey("ExerciseId")]
         public int ExerciseId { get; set; }
+
+        [JsonIgnore]
         public ExerciseData? Exercise { get; set; }
 
         [ForeignKey("PlansId")]
+        [JsonIgnore]
         public ICollection<WorkoutPlans> WorkoutPlans { get; set; }
 
         [ForeignKey("UserId")]

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,9 +11,13 @@ using WorkoutTracker.Backend.Models;
 
 namespace WorkoutTracker.Backend.Controllers
 {
+
+    /// <summary>
+    /// Controller untuk mengelola login dang register akun pada sistem
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Description("Test")]
+    [SwaggerTag("Controller untuk mengelola autentikasi")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -28,8 +33,9 @@ namespace WorkoutTracker.Backend.Controllers
             _userManager = userManager;
         }
 
+        
         [HttpPost("Login")]
-        [EndpointDescription("User Login")]
+        // [EndpointDescription("User Login")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Login([FromBody] LoginRequest login)
         {

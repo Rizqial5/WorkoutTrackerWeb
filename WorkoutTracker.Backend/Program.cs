@@ -8,6 +8,8 @@ using System.Text;
 using WorkoutTracker.Backend.Services;
 using WorkoutTracker.Backend.Services.Interfaces;
 using WorkoutTracker.Backend.Transformers;
+using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -24,6 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddStackExchangeRedisCache(opt =>
 {
     opt.Configuration = configuration.GetConnectionString("Redis");
@@ -33,6 +37,7 @@ builder.Services.AddStackExchangeRedisCache(opt =>
 builder.Services.AddOpenApi("v1", opt =>
 {
     opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    opt.AddDocumentTransformer<CustomOpenApiDocumentTransformer>();
 
     opt.AddDocumentTransformer((document, context, cancellationToken) => {
 
@@ -47,6 +52,19 @@ builder.Services.AddOpenApi("v1", opt =>
             Email = "bagusriski1@gmail.com",
             Name = "Bagus Rizqi"
         };
+        // document.Tags = new List<OpenApiTag>
+        // {
+        //     new OpenApiTag
+        //     {
+        //         Name = "Auth",
+        //         Description = "Endpoints untuk autentikasi pengguna.",
+        //         ExternalDocs = new OpenApiExternalDocs
+        //         {
+        //             Description = "Dokumentasi autentikasi lebih lanjut",
+        //             Url = new Uri("https://authdocs.example.com")
+        //         }
+        //     },
+        // };
 
         return Task.CompletedTask;
     });
@@ -109,6 +127,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
 
     app.MapScalarApiReference(options =>
     {

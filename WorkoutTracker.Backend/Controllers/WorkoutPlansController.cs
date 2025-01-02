@@ -75,7 +75,7 @@ namespace WorkoutTracker.Backend.Controllers
             return Ok(response);   
         }
 
-        private async Task<IIncludableQueryable<WorkoutPlans, ExerciseData?>> WorkoutPlansList()
+        private async Task<IIncludableQueryable<WorkoutPlans,ExerciseData?>> WorkoutPlansList()
         {
             var user = await _userManager.GetUserAsync(User);
 
