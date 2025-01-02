@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,7 +15,6 @@ namespace WorkoutTracker.Backend.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [SwaggerTag("Controller untuk mengelola autentikasi")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
