@@ -16,11 +16,19 @@ Login method user.
 
 + Request (application/json)
 
-    + Attributes (Login Request)
+    ```
+    {
+        "username": null,
+        "password": null
+    }
+    ```
 
 + Response 200 (application/json)
-
-    + Attributes (Login Response)
+    ```
+    {
+        token: JWT_TOKEN_RESPONSE (string)
+    }
+    ```
 
 ## Register [/api/Auth/Register]
 
@@ -30,9 +38,18 @@ Register new account
 
 + Request (application/json)
 
-    + Attributes (Register Request)
+    ```
+    {
+        + email: email@email.com (string, nullable)
+        + username: username (string, nullable)
+        + password: password (string, nullable)
+
+    }
+    ```
 
 + Response 200 (application/json)
+
+    
 
 # Group Exercise Data
 
@@ -46,7 +63,14 @@ Get All Exercise Data
 
 + Response 200 (application/json)
 
-    + Attributes (array[Exercise Data Response])
+    ```json
+    [
+        "id": "1" (number)
+        "name": "Bench Press" (string)
+        categoryWorkout: Strength, Cardio (enum)
+        muscleGroup: Back, Chest, Arm, Leg (enum)
+    ]
+    ```
 
 
 ### Add Exercise Data [POST]
