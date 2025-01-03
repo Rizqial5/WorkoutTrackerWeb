@@ -39,6 +39,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/SchedulePlans
         [HttpGet]
+        [EndpointDescription(
+            "Displays all schedule plans that have been set as active by the user."
+        )]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSchedulePlans()
         {
 
@@ -71,6 +74,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/SchedulePlans/5
         [HttpGet("{id}")]
+        [EndpointDescription(
+            "Displays all schedule plans that have been set as active by the user through id input."
+        )]
         public async Task<ActionResult<SchedulePlans>> GetSchedulePlans(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -106,6 +112,9 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpGet("sort")]
+        [EndpointDescription(
+            "Displays all schedule plans sorted by the nearest scheduled date."
+        )]
         public async Task<ActionResult<IEnumerable<SchedulePlans>>> GetSortedPlans()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -141,6 +150,9 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/SchedulePlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EndpointDescription(
+            "Modifies Schedulue Plans"
+        )]
         public async Task<IActionResult> PutSchedulePlans(int id, SchedulePlansRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -170,6 +182,9 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpPut("{id}/done")]
+        [EndpointDescription(
+            "Sets schedule plans to done."
+        )]
         public async Task<IActionResult> SetDoneWorkoutPlans(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -207,6 +222,9 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/SchedulePlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EndpointDescription(
+            "Schedules workouts from workout plans previously created by the user."
+        )]
         public async Task<ActionResult<SchedulePlans>> PostSchedulePlans(SchedulePlansRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -240,6 +258,7 @@ namespace WorkoutTracker.Backend.Controllers
 
         // DELETE: api/SchedulePlans/5
         [HttpDelete("{id}")]
+        [EndpointDescription("Delete Schedule Plans from data")]
         public async Task<IActionResult> DeleteSchedulePlans(int id)
         {
             var user = await _userManager.GetUserAsync(User);

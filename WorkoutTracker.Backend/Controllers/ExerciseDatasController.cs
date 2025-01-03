@@ -23,6 +23,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/ExerciseDatas
         [HttpGet]
+        [EndpointDescription(
+            "Displays all data about exercises that have been input by the admin."
+        )]
         public async Task<ActionResult<IEnumerable<ExerciseDataResponse>>> GetExerciseDatas()
         {
             var exerciseDatas = await _context.ExerciseDatas.ToListAsync();
@@ -36,6 +39,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/ExerciseDatas/5
         [HttpGet("{id}")]
+        [EndpointDescription(
+            "Displays all exercise data based on the input ID."
+        )]
         public async Task<ActionResult<ExerciseDataResponse>> GetExerciseData(int id)
         {
             var exerciseData = await _context.ExerciseDatas.FindAsync(id);
@@ -53,6 +59,9 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/ExerciseDatas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EndpointDescription(
+            "Modifies exercise data based on the input ID."
+        )]
         public async Task<IActionResult> PutExerciseData(int id, [FromBody]  ExerciseData exerciseData)
         {
             if (id != exerciseData.ExerciseId)
@@ -84,6 +93,9 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/ExerciseDatas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EndpointDescription(
+            "Input new exercise data"
+        )]
         public async Task<ActionResult<ExerciseDataResponse>> PostExerciseData([FromBody] ExerciseData exerciseData)
         {
             _context.ExerciseDatas.Add(exerciseData);
@@ -96,6 +108,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // DELETE: api/ExerciseDatas/5
         [HttpDelete("{id}")]
+        [EndpointDescription(
+            "Delete exercise data"
+        )]
         public async Task<IActionResult> DeleteExerciseData(int id)
         {
             var exerciseData = await _context.ExerciseDatas.FindAsync(id);

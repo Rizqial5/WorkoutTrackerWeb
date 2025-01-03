@@ -40,6 +40,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/WorkoutPlans
         [HttpGet]
+        [EndpointDescription(
+            "Displays all workout plans created by the user."
+        )]
         public async Task<ActionResult<IEnumerable<WorkoutPlans>>> GetWorkoutPlans()
         {
 
@@ -90,10 +93,11 @@ namespace WorkoutTracker.Backend.Controllers
 
         
 
-       
-
         // GET: api/WorkoutPlans/5
         [HttpGet("{id}")]
+        [EndpointDescription(
+            "Display workout plan data created by the user based on the input ID."
+        )]
         public async Task<ActionResult<WorkoutPlans>> GetWorkoutPlans(int id)
         {
 
@@ -123,6 +127,7 @@ namespace WorkoutTracker.Backend.Controllers
         }
 
         [HttpGet("{id}/report")]
+        [EndpointDescription("Displays the progress report of workout plans that have been completed.")]
         public async Task<ActionResult<WorkoutPlanReport>> GetPlanReport(int id)
         {
 
@@ -171,6 +176,7 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/WorkoutPlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EndpointDescription("Modifies existing workout plan by id input")]
         public async Task<IActionResult> PutWorkoutPlans(int id, WorkoutPlansPostRequest workoutRequest)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -214,6 +220,9 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/WorkoutPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EndpointDescription(
+            "Creates workout plan data from multiple exercise sets that have been created by the user."
+        )]
         public async Task<ActionResult<WorkoutPlanResponse>> PostWorkoutPlans([FromBody] WorkoutPlansPostRequest workoutPlansRequest)
         {
 
@@ -261,6 +270,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // DELETE: api/WorkoutPlans/5
         [HttpDelete("{id}")]
+        [EndpointDescription(
+            "Delete workoutplans data by id input"
+        )]
         public async Task<IActionResult> DeleteWorkoutPlans(int id)
         {
             var user = await _userManager.GetUserAsync(User);

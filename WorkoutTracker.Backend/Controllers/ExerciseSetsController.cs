@@ -37,6 +37,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/ExerciseSets
         [HttpGet]
+        [EndpointDescription(
+            "Displays all exercise sets created by the user."
+        )]
         public async Task<ActionResult<IEnumerable<ExerciseSet>>> GetExerciseSets()
         {
 
@@ -77,6 +80,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // GET: api/ExerciseSets/5
         [HttpGet("{id}")]
+        [EndpointDescription(
+            "Displays exercise sets created by the user through id input."
+        )]
         public async Task<ActionResult<ExerciseSet>> GetExerciseSet(int id)
         {
             var user = await GetUserAsync();
@@ -114,6 +120,9 @@ namespace WorkoutTracker.Backend.Controllers
         // PUT: api/ExerciseSets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EndpointDescription(
+            "Modifies exercise sets based on the input ID."
+        )]
         public async Task<IActionResult> PutExerciseSet(int id, CreateExerciseSetRequest request)
         {
             var user = await GetUserAsync();
@@ -150,6 +159,9 @@ namespace WorkoutTracker.Backend.Controllers
         // POST: api/ExerciseSets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EndpointDescription(
+            "Input new exercise set based on exercise data"
+        )]
         public async Task<ActionResult<ExerciseSet>> PostExerciseSet(CreateExerciseSetRequest exerciseSetRequest)
         {
             var user = await GetUserAsync();
@@ -186,6 +198,9 @@ namespace WorkoutTracker.Backend.Controllers
 
         // DELETE: api/ExerciseSets/5
         [HttpDelete("{id}")]
+        [EndpointDescription(
+            "Delete exercise set based on id input"
+        )]
         public async Task<IActionResult> DeleteExerciseSet(int id)
         {
     
