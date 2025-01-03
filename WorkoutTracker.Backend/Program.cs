@@ -52,19 +52,6 @@ builder.Services.AddOpenApi("v1", opt =>
             Email = "bagusriski1@gmail.com",
             Name = "Bagus Rizqi"
         };
-        // document.Tags = new List<OpenApiTag>
-        // {
-        //     new OpenApiTag
-        //     {
-        //         Name = "Auth",
-        //         Description = "Endpoints untuk autentikasi pengguna.",
-        //         ExternalDocs = new OpenApiExternalDocs
-        //         {
-        //             Description = "Dokumentasi autentikasi lebih lanjut",
-        //             Url = new Uri("https://authdocs.example.com")
-        //         }
-        //     },
-        // };
 
         return Task.CompletedTask;
     });
