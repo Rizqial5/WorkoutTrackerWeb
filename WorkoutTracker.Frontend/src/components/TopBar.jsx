@@ -3,6 +3,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import theme from "../theme/them";
 
 export default function TopBar({open, toggleDrawer, titleText}) {
+
+    const username = localStorage.getItem('username');
+
     return <AppBar
         position='fixed'
         sx={{
@@ -36,7 +39,7 @@ export default function TopBar({open, toggleDrawer, titleText}) {
             color: '#1976d2',
         }}>
             <Typography color="white">
-                Selamat Datang, <strong>Username</strong>
+                Selamat Datang, <strong>{username}</strong>
             </Typography>
                 
             </Box>
