@@ -67,6 +67,7 @@ namespace WorkoutTracker.Backend.Utilities
         {
             var response = new ExerciseDataResponse
             {
+                Id = exerciseData.ExerciseId,
                 Name = exerciseData.Name,
                 CategoryWorkout = exerciseData.CategoryWorkout,
                 MuscleGroup = exerciseData.MuscleGroup
