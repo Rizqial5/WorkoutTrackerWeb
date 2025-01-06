@@ -11,6 +11,7 @@ import { CssBaseline, Box} from '@mui/material'
 import Dashboard from './components/Dashboard.jsx'
 import TopBar from './components/TopBar.jsx'
 import styled from "styled-components";
+import ExerciseSets from './components/ExerciseSets.jsx'
 
 
 
@@ -48,6 +49,20 @@ function App() {
                             <TopBar open={open} toggleDrawer={toggleDrawer}/>
                             <Sidebar openBar={open} toggleDrawer={toggleDrawer} />
                             <Dashboard open={open}/>
+                        </Box>
+                        </ThemeProvider>
+                    </ProtectedRoute>
+                }/>
+            <Route
+                path="/exercise"
+                element={
+                    <ProtectedRoute>
+                        <ThemeProvider theme={theme}>
+                        <CssBaseline/>
+                        <Box sx={{display: 'flex'}}>
+                            <TopBar open={open} toggleDrawer={toggleDrawer}/>
+                            <Sidebar openBar={open} toggleDrawer={toggleDrawer} />
+                            <ExerciseSets open={open}/>
                         </Box>
                         </ThemeProvider>
                     </ProtectedRoute>

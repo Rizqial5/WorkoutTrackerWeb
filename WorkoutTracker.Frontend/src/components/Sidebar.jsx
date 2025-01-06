@@ -73,7 +73,7 @@ export default function Sidebar({openBar, toggleDrawer}) {
         <List>
         {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate(item.path)}>
                 <ListItemIcon>
                 <item.icon />
                 </ListItemIcon>
