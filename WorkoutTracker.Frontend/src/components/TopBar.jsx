@@ -1,8 +1,8 @@
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material"
+import { AppBar, Toolbar, IconButton, Typography, Box } from "@mui/material"
 import MenuIcon from '@mui/icons-material/Menu';
 import theme from "../theme/them";
 
-export default function TopBar({open, toggleDrawer}) {
+export default function TopBar({open, toggleDrawer, titleText}) {
     return <AppBar
         position='fixed'
         sx={{
@@ -25,8 +25,21 @@ export default function TopBar({open, toggleDrawer}) {
                 <MenuIcon />
             </IconButton>
             <Typography variant='h6' noWrap component='div'>
-                Workout Planner
+                {titleText}
             </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#1976d2',
+        }}>
+            <Typography color="white">
+                Selamat Datang, <strong>Username</strong>
+            </Typography>
+                
+            </Box>
         </Toolbar>
     </AppBar>
 }

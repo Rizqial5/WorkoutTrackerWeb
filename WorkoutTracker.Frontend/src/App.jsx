@@ -46,7 +46,7 @@ function App() {
                         <ThemeProvider theme={theme}>
                         <CssBaseline/>
                         <Box sx={{display: 'flex'}}>
-                            <TopBar open={open} toggleDrawer={toggleDrawer}/>
+                            <TopBar open={open} toggleDrawer={toggleDrawer} titleText={"Dashboard"}/>
                             <Sidebar openBar={open} toggleDrawer={toggleDrawer} />
                             <Dashboard open={open}/>
                         </Box>
@@ -60,7 +60,7 @@ function App() {
                         <ThemeProvider theme={theme}>
                         <CssBaseline/>
                         <Box sx={{display: 'flex'}}>
-                            <TopBar open={open} toggleDrawer={toggleDrawer}/>
+                            <TopBar open={open} toggleDrawer={toggleDrawer} titleText={"Exercise"}/>
                             <Sidebar openBar={open} toggleDrawer={toggleDrawer} />
                             <ExerciseSets open={open}/>
                         </Box>
