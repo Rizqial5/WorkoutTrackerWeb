@@ -9,8 +9,7 @@ function WorkoutPlans() {
     const [loading, setLoading] =  useState(true)
     const [error, setError] = useState('')
 
-    useEffect(() => {
-       const fetchData = async () => {
+    const fetchData = async () => {
         try{
             const data = await getWorkoutPlans();
             setWorkoutPlansData(data);
@@ -20,7 +19,8 @@ function WorkoutPlans() {
             setLoading(false);
         }
        };
-
+    
+    useEffect(() => {
        fetchData();
     }, []);
 
