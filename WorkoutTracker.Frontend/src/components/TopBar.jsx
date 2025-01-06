@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, IconButton, Typography, Box } from "@mui/material"
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import theme from "../theme/them";
 
 export default function TopBar({open, toggleDrawer, titleText}) {
@@ -38,10 +39,12 @@ export default function TopBar({open, toggleDrawer, titleText}) {
             justifyContent: 'center',
             color: '#1976d2',
         }}>
-            <Typography color="white">
-                Selamat Datang, <strong>{username}</strong>
-            </Typography>
-                
+                <Typography color="white">
+                    Selamat Datang, <strong>{username}</strong>
+                </Typography>
+                <IconButton sx={{color: 'white', ml: 1}}>   
+                    <AccountCircleIcon fontSize="large"/>
+                </IconButton>              
             </Box>
         </Toolbar>
     </AppBar>
