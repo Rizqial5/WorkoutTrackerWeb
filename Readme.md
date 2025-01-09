@@ -8,13 +8,10 @@ https://roadmap.sh/projects/fitness-workout-tracker
 ## Table of Contents
 1. [Overview](#overview)
 2. [Authentication](#authentication)
-3. [Endpoints](#endpoints)
-    - [GET /api/resource](#get-apiresource)
-    - [POST /api/resource](#post-apiresource)
-    - [PUT /api/resource/{id}](#put-apiresourceid)
-    - [DELETE /api/resource/{id}](#delete-apiresourceid)
-4. [Error Codes](#error-codes)
-5. [Changelog](#changelog)
+3. [Authentication Endpoint](#authentication-controller)
+4. [Exercise Data Endpoint](#exercise-data-controller)
+5. [Error Codes](#error-codes)
+6. [Changelog](#changelog)
 
 ---
 
