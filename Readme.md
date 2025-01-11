@@ -124,11 +124,201 @@ Exercise Data contains a list of all workout movements input by the admin, which
 
 ### Endpoints
 
-- [`GET` /api/ExerciseDatas]()
-- [`GET` /api/ExerciseDatas/{id}]()
-- [`POST` /api/ExerciseDatas]()
-- [`PUT` /api/ExerciseDatas/{id}]()
-- [`DELETE` /api/ExerciseDatas/{id}]()
+- [`GET` /api/ExerciseDatas](#get-apiexercisedatas)
+- [`GET` /api/ExerciseDatas/{id}](#get-apiexercisedatasid)
+- [`POST` /api/ExerciseDatas](#post-apiexercisedatas)
+- [`PUT` /api/ExerciseDatas/{id}](#put-apiexercisedatasid)
+- [`DELETE` /api/ExerciseDatas/{id}](#delete-apiexercisedatasid)
+
+---
+
+### `GET` api/ExerciseDatas
+
+Displays all data about exercises that have been input by the admin.
+
+- **URL:** `/api/ExerciseDatas`
+- **Method:** `GET`
+- **Headers:**
+    - `Content-Type: application/json`
+
+```http
+GET /api/exercisedatas
+Host: api.example.com
+Authorization: Bearer <your_token_here>
+```
+
+#### Example Response
+
+`200 (OK)`
+
+```json
+{
+  [
+    {
+      "id": 1,
+      "name": "…",
+      "categoryWorkout": 1,
+      "muscleGroup": 1
+    }
+  ]
+}
+```
+
+
+### `GET` api/ExerciseDatas/{id}
+
+Displays all exercise data based on the input ID.
+
+- **URL:** `/api/ExerciseDatas/{id}`
+- **Method:** `GET`
+- **Headers:**
+  - `Content-Type: application/json`
+- **Path Parameters**
+  - id : integer
+
+### Example Request
+
+```http
+GET /api/exercisedatas/1
+Host: api.example.com
+Authorization: Bearer <your_token_here>
+```
+
+### Example Response
+
+`200 (OK)`
+
+```json
+{
+  "id": 1,
+  "name": "…",
+  "categoryWorkout": 1,
+  "muscleGroup": 1
+}
+```
+
+### `POST` api/ExerciseDatas/
+
+Input new exercise data
+
+- **URL:** `/api/exercisedatas`
+- **Method:** `POST`
+- **Headers:**
+    - `Authorization: Bearer <token>`
+    - `Content-Type: application/json`
+- **Body Parameters:**
+    - `exerciseId` (integer, required) 
+    - `name` (string, required)
+    - `categoryWorkout` (enum, required)
+    - `muscleGroup` (enum, required)
+
+### Example Request
+
+```http
+POST /api/resource?page=1&limit=10 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <your_token_here>
+Content-Type: application/json
+```
+
+```json
+{
+  "exerciseId": 1,
+  "name": "Bench Press",
+  "categoryWorkout": 1,
+  "muscleGroup": 1,
+}
+```
+
+### Example Response
+
+`200 (OK)`
+
+```json
+{
+  "exerciseId": 1,
+  "name": "Bench Press",
+  "categoryWorkout": 1,
+  "muscleGroup": 1,
+}
+```
+
+### `PUT` api/ExerciseDatas/{id}
+
+Modifies exercise data based on the input ID.
+
+- **URL:** `/api/exercisedatas/{id}`
+- **Method:** `PUT`
+- **Headers:**
+    - `Authorization: Bearer <token>`
+    - `Content-Type: application/json`
+- **Path Parameters**
+    - `Id` : integer
+- **Body Parameters:**
+    - `exerciseId` (integer, required) 
+    - `name` (string, required)
+    - `categoryWorkout` (enum, required)
+    - `muscleGroup` (enum, required)
+
+### Example Request
+
+```http
+PUT /api/exercisedatas/1 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <your_token_here>
+Content-Type: application/json
+```
+
+```json
+{
+  "exerciseId": 0,
+  "name": "Bench Press",
+  "categoryWorkout": 1,
+  "muscleGroup": 1,
+}
+```
+
+### Example Response
+
+`200 (OK)`
+
+```json
+{
+  "exerciseId": 1,
+  "name": "Bench Press",
+  "categoryWorkout": 1,
+  "muscleGroup": 1,
+}
+```
+
+### `DELETE` api/ExerciseDatas/{id}
+
+Delete exercise data
+
+- **URL:** `/api/exercisedatas/{id}`
+- **Method:** `DELETE`
+- **Headers:**
+    - `Authorization: Bearer <token>`
+    - `Content-Type: application/json`
+- **Path Parameters**
+    - `Id` : integer
+
+### Example Request
+
+```http
+DELETE /api/exercisedatas/1 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <your_token_here>
+Content-Type: application/json
+```
+
+
+
+### Example Response
+
+`200 (OK)`
+
+
 
 ---
 ## Endpoints
@@ -153,11 +343,18 @@ Host: api.example.com
 Authorization: Bearer <your_token_here>
 ```
 
+
+
 #### Example Response
 
-```
+`200 (OK)`
+
+```json
 {
-  200
+  "id": 1,
+  "name": "Bench Press",
+  "categoryWorkout": 1,
+  "muscleGroup": 1
 }
 ```
 
