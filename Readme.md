@@ -490,5 +490,5 @@ Authorization: Bearer <your_token_here>
 
 ---
 
-Feel free to use and extend this template based on your project’s specific needs!
+
 
